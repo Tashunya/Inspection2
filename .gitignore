@@ -42,5 +42,3 @@ nosetests.xml
 venv
 
 .idea
-
-.gitignore
