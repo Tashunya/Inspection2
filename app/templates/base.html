@@ -1,9 +1,11 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}СРК{% endblock %}
+{% block title %}Инспекция СРК{% endblock %}
 
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 {% endblock %}
 
 {% block navbar %}
@@ -16,11 +18,18 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">СРК</a>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}"><i class="fas fa-ruler-combined"></i> СРК</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('main.index' )}}">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
