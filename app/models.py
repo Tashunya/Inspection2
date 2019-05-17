@@ -2,6 +2,7 @@ from . import db
 from . import login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -12,13 +13,26 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+class Company(db.Model):
+    __tablename__ = 'companies'
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(64), unique=True, index=True)
+    users = db.relationship('User', backref='company', lazy='dynamic')
+    boilers = db.relationship('Boiler', backref='company', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Company %r>' % self.company_name
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
-    username = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), index=True)
     password_hash = db.Column(db.String(128))
+    contact_number = db.Column(db.String(64))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -34,10 +48,20 @@ class User(db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Boiler(db.Model):
+    __tablename__ = 'boilers'
+    id = db.Column(db.Integer, primary_key=True)
+    boiler_name = db.Column(db.String(64), unique=True, index=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
+
+    def __repr__(self):
+        return '<Boiler %r>' % self.boiler_name
+
 
 
 
