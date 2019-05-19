@@ -84,7 +84,7 @@ class Boiler(db.Model):
 
 
 
-# # db.create_all()
+# db.create_all()
 # admin_role = Role(name="Admin")
 # user_role = Role(name="User")
 # user_john = User(username ="john", role=admin_role)

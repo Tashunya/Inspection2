@@ -1,6 +1,6 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}Инспекция СРК{% endblock %}
+{% block title %}RB Inspection{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -23,6 +23,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.index' )}}">Home</a></li>
+                <li><a href="#">Another Page</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
