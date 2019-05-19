@@ -1,0 +1,8 @@
+Dear {{ user.username }},
+Your account have been created.
+To confirm your account please click on the following link:
+{{ url_for('auth.confirm', token=token, _external=True) }}
+The link will be valid within 1 hour.
+Sincerely,
+RB Inspection Team
+Note: replies to this email address are not monitored.
