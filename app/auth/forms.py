@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(min=6, max=64), Email()])
     username = StringField('Full Name', validators=[DataRequired(), Length(min=6, max=64)])
-    role = SelectField("Role", choices=[], coerce=int, validators=[DataRequired()])
+    role = SelectField("Role", choices=[], coerce=int)
     company = SelectField("Company", choices=[], coerce=int)
     password = PasswordField('Password',
                              validators=[DataRequired(), EqualTo('password2', message='Passwords must match.')])
