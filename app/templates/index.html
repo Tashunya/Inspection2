@@ -4,13 +4,11 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>John Doe{{ current_user.username }}</h1>
-    <h2>Company name</h2>
+    <h1>{{ current_user.username }}</h1>
+    <h2>{{ company }} </h2>
 </div>
 <ul>
     <li><a href="#">Boiler 1 </a></li>
     <li><a href="#">Boiler 2 </a></li>
 </ul>
 {% endblock %}
-
-<!--comment to check-->
