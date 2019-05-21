@@ -1,9 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}User account{% endblock %}
+{% block title %}User Profile{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Hello, {{ current_user.username }}!</h1>
+<h1>{{ user.username }}</h1>
+    <h3>{{ role.name}}</h3>
 </div>
+<p>
+Company: {% if user.company_id %}{{ company.company_name }}{% endif %},
+Position: {% if user.position %}{{user.position}}{% endif %}
+</p>
+    <h2>Contact Info</h2>
+
+<p>
+    Email: {% if user.email %}{{ user.email}}{% endif %}
+</p>
+<p>
+    Phone number: {% if user.contact_number %} {{user.contact_number}} {% endif %}
+</p>
+
 {% endblock %}
