@@ -2,8 +2,9 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
 from .. import db
-from ..models import User, Role, Company
-from .forms import LoginForm, RegistrationForm
+from ..models import User, Role, Company, Permission
+from ..decorators import permission_required
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from ..email import send_email
 
 
@@ -49,15 +50,15 @@ def logout():
 
 
 @auth.route("/register", methods=["GET", "POST"])
+@login_required
+@permission_required(Permission.USER_REGISTER)
 def register():
     form = RegistrationForm()
-    form.role.choices = [(r.id, r.name)for r in Role.query.all()]
-    form.company.choices = [(c.id, c.company_name) for c in Company.query.all()]
     if form.validate_on_submit():
         user = User(email=form.email.data,
                     username=form.username.data,
-                    role_id=int(form.role.data),
-                    company_id=int(form.company.data),
+                    role_id=int(Role.query.get(form.role.data)),
+                    company_id=int(Company.query.get(form.company.data)),
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -89,3 +90,18 @@ def resend_confirmation():
     flash("A new confirmation email has been sent to you by email.")
     return redirect(url_for('main.index'))
 
+
+@auth.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    form = ChangePasswordForm
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Your password has been updated")
+            return redirect(url_for('main.user'))
+        else:
+            flash("Invalid password.")
+    return render_template("auth/change_password.html", form=form)
