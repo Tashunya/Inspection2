@@ -9,7 +9,7 @@
     ({{ user.role.name}})
     {% endif %}
 </div>
-<p> Company: {% if user.company %}{{ user.company.company_name }}{% endif %} </p>
+<p> Company: {% if user.company %}<a href=" {{url_for('.company', id=user.company_id) }}">{{ user.company.company_name }}</a> {% endif %} </p>
 <p> Position: {% if user.position %}{{user.position}}{% endif %} </p>
 
 
@@ -31,14 +31,16 @@
 
 <p>
     {% if current_user.can(Permission.USER_REGISTER) %}
-    <a class="btn btn-default" href="{{ url_for('auth.change_password') }}">
-    Change password
-    </a>
-    <a class="btn btn-danger"
+        {% if user == current_user %}
+            <a class="btn btn-default" href="{{ url_for('auth.change_password') }}">
+            Change password
+            </a>
+        {% endif %}
+    <a class="btn btn-danger btn-sm"
     href="{{ url_for('.edit_profile_admin', id=user.id) }}">
-    Edit Profile [Admin]
+    Edit Profile
     </a>
-    <a class="btn btn-danger"> Deactivate Account [Admin]</a>
+    <a class="btn btn-danger btn-sm"> Deactivate Account</a>
     {% endif %}
 </p>
 

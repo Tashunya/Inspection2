@@ -4,8 +4,11 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h2>{{ company.company_name}} </h2>
+    <h2>
+        <a href="{{ url_for('.company', id=company.id) }}"> {{ company.company_name}} </a>
+    </h2>
 </div>
+
 <ul>
     <li><a href="#">Boiler 1 </a></li>
     <li><a href="#">Boiler 2 </a></li>

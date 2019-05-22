@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, Optional
 from wtforms import ValidationError
 from ..models import Role, User, Company
 
@@ -34,4 +34,18 @@ class EditProfileAdminForm(FlaskForm):
         if field.data != self.user.email and \
                 User.query.filter_by(email=field.data).first():
             raise ValidationError('Email already registered.')
+
+
+class CompanyRegistrationForm(FlaskForm):
+    company_name = StringField('Company Name', validators=[DataRequired(), Length(min=6, max=64)])
+    location = StringField('Location', validators=[Length(min=0, max=64)])
+    about = TextAreaField('Info', validators=[Optional()])
+    submit = SubmitField('Register Company')
+
+
+class EditCompanyForm(FlaskForm):
+    company_name = StringField('Company Name', validators=[DataRequired(), Length(min=6, max=64)])
+    location = StringField('Location', validators=[Length(min=0, max=64)])
+    about = TextAreaField('Info', validators=[Optional()])
+    submit = SubmitField('Edit Company')
 

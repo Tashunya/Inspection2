@@ -49,10 +49,10 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
-@auth.route("/register", methods=["GET", "POST"])
+@auth.route("/register-user", methods=["GET", "POST"])
 @login_required
 @permission_required(Permission.USER_REGISTER)
-def register():
+def register_user():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email=form.email.data,
@@ -66,7 +66,7 @@ def register():
         send_email(user.email, "Finish Registration", 'auth/email/confirm', user=user, token=token)
         flash("User created. A letter have been sent to finish registration.")
         return redirect(url_for("auth.login"))
-    return render_template("auth/register.html", form=form)
+    return render_template("auth/register_user.html", form=form)
 
 
 @auth.route("/confirm/<token>", methods=["GET", "POST"])

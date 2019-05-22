@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Company Profile{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+<h1>{{ company.company_name }}</h1>
+</div>
+<p> Location: {% if company.location %} {{ company.location }}{% endif %} </p>
+<p> Info: {% if company.about %}{{company.about}}{% endif %} </p>
+
+<p>
+    {% if current_user.can(Permission.COMPANY_REGISTER) %}
+    <a class="btn btn-danger btn-sm"
+    href="{{ url_for('.edit_company', id=company.id) }}">
+    Edit Company
+    </a>
+    <a class="btn btn-danger btn-sm"> Deactivate Company</a>
+    {% endif %}
+</p>
+
+<h3> Empoyees: </h3>
+<ul>
+    {% for employee in employees %}
+    <li>
+        <a href="{{ url_for('.user', id=employee.id) }}">
+            {% if employee.username %} {{ employee.username }} {% else %} {{ employee.email }} {% endif %}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+<p>
+    {% if current_user.can(Permission.USER_REGISTER) %}
+    <a class="btn btn-danger btn-sm"
+    href="{{ url_for('auth.register_user') }}">
+    Add New User
+    </a>
+    {% endif %}
+</p>
+
+<h3>Boilers:</h3>
+<ul>
+    <li>Boiler 1</li>
+    <li>Boiler 2</li>
+</ul>
+
+<p>
+    {% if current_user.can(Permission.CREATE_BOILER) %}
+    <a class="btn btn-danger btn-sm"
+    href="#">
+    Add New Boiler
+    </a>
+    {% endif %}
+</p>
+
+{% endblock %}

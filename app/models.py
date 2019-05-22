@@ -6,16 +6,19 @@ from . import db, login_manager
 
 
 class Permission:
-    OWN_BOILER_ACCESS = 1
-    ALL_BOILERS_ACCESS = 2
-    BOILER_DATA_UPLOAD = 4
-    USER_REGISTER = 8
-    REPORT_DOWNLOAD = 16
-    EDIT_BOILER_DATA = 32
-    COMPANY_REGISTER = 64
-    CREATE_BOILER = 128
-    VIEW_PROFILES = 256
+    OWN_BOILER_ACCESS = 1 # доступ к своей компании и к своим котлам (возможно не нужно)
+    ALL_BOILERS_ACCESS = 2 # доступ ко всем компаниям и котлам
+    BOILER_DATA_UPLOAD = 4 # загрузка данных измерений ко всем котлам
+    USER_REGISTER = 8 # создание и редактирование пользователей
+    REPORT_DOWNLOAD = 16 # выгрузка отчетов по котлам
+    EDIT_BOILER_DATA = 32 # редактирование данных по котлам (узлов, норм, измерений)
+    COMPANY_REGISTER = 64 # регистрация и редактирование компаний (возможно перенос в USER_REGISTER?)
+    CREATE_BOILER = 128 # создание карточки и структуры котла
+    VIEW_PROFILES = 256 # просмотр всех профилей пользователей (возможно перенос в USER_REGISTER?)
 
+
+#==============================================
+# ROLE
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -69,8 +72,9 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' % self.name
 
-#==========================================
 
+#==========================================
+# USER
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -115,9 +119,6 @@ class User(UserMixin, db.Model):
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
-    # def is_administrator(self):
-    #     return self.can(Permission.ADMIN)
-
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -134,16 +135,23 @@ def load_user(user_id):
 
 
 # ============================================
+# COMPANY
 
 class Company(db.Model):
     __tablename__ = 'companies'
     id = db.Column(db.Integer, primary_key=True)
     company_name = db.Column(db.String(64), unique=True, index=True)
+    location = db.Column(db.String(64))
+    about = db.Column(db.Text)
     users = db.relationship('User', backref='company', lazy='dynamic')
     boilers = db.relationship('Boiler', backref='company', lazy='dynamic')
 
     def __repr__(self):
         return '<Company %r>' % self.company_name
+
+
+# ============================================
+# BOILER
 
 class Boiler(db.Model):
     __tablename__ = 'boilers'
@@ -155,16 +163,16 @@ class Boiler(db.Model):
         return '<Boiler %r>' % self.boiler_name
 
 
+# ============================================
 
 
-# db.create_all()
-# admin_role = Role(name="Admin")
-# user_role = Role(name="User")
-# user_john = User(username ="john", role=admin_role)
-# user_susan = User(username="susan", role=user_role)
-#
-# # db.session.add_all([admin_role, user_role, user_john, user_susan])
-# # db.session.commit()
+class Nodes: # все узлы и точки котла
+    pass
+
+
+class Norms: # содержит нормативные значения для измерений всех точек
+    pass
+
 
 
 
