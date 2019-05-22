@@ -6,15 +6,37 @@ from .. import db
 from ..models import User, Company, Role, Permission
 from ..decorators import permission_required
 
+#=========================================
+# INDEX ROUTES
 
 @main.route('/')
 @login_required
 def index():
-    # if current_user.is_anonymous:
-    #     return redirect(url_for('auth.login'))
     role = Role.query.filter_by(id=current_user.role_id).first()
     company = Company.query.filter_by(id=current_user.company_id).first()
+    if current_user.role_id == 1:
+        return redirect(url_for('.inspector'))
+    if current_user.role_id == 0:
+        return redirect(url_for('.admin'))
     return render_template('index.html', company=company, role=role)
+
+@main.route('/inspector')
+@login_required
+def inspector():
+    if current_user.role_id == 1:
+        company_list = Company.query.order_by(Company.company_name).all()
+        return render_template('inspector.html', company_list=company_list)
+    else:
+        abort(403)
+
+@main.route('/admin')
+@login_required
+def admin():
+    if current_user.role_id == 0:
+        company_list = Company.query.order_by(Company.company_name).all()
+        return render_template('admin.html', company_list=company_list)
+    else:
+        abort(403)
 
 #====================
 # USER ROUTES

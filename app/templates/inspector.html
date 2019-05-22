@@ -9,4 +9,23 @@
     </h2>
 </div>
 
+
+<h3> Companies: </h3>
+
+<ul>
+    {% for comp in company_list %}
+        {% if not comp.id == 3 %}
+        <li>
+
+            <a href="{{ url_for('.company', id=comp.id) }}">
+                {{ comp.company_name }}
+            </a>
+        </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+<h3><a href="{{ url_for('.company', id=current_user.company_id) }}">Our company</a></h3>
+
+
 {% endblock %}
