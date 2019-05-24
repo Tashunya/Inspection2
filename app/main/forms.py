@@ -48,4 +48,3 @@ class EditCompanyForm(FlaskForm):
     location = StringField('Location', validators=[Length(min=0, max=64)])
     about = TextAreaField('Info', validators=[Optional()])
     submit = SubmitField('Edit Company')
-

@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
+from datetime import datetime
 from . import db, login_manager
 
 
@@ -87,7 +88,7 @@ class User(UserMixin, db.Model):
     position = db.Column(db.String(64))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-
+    users = db.relationship('Measurements', backref='inspector', lazy='dynamic')
 
     @property
     def password(self):
@@ -119,6 +120,11 @@ class User(UserMixin, db.Model):
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
+    def company_access(self, company_id):
+        if self.company_id == company_id or self.can(Permission.ALL_BOILERS_ACCESS):
+            return True
+        return False
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -127,15 +133,18 @@ class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
         return False
 
+
 login_manager.anonymous_user = AnonymousUser
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# ============================================
+# =============================================
 # COMPANY
+# =============================================
 
 class Company(db.Model):
     __tablename__ = 'companies'
@@ -152,26 +161,56 @@ class Company(db.Model):
 
 # ============================================
 # BOILER
+# ============================================
 
 class Boiler(db.Model):
     __tablename__ = 'boilers'
     id = db.Column(db.Integer, primary_key=True)
     boiler_name = db.Column(db.String(64), unique=True, index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
+    nodes = db.relationship('Nodes', backref='boiler', lazy='dynamic')
+    measurements = db.relationship('Measurements', backref='boiler', lazy='dynamic')
 
     def __repr__(self):
         return '<Boiler %r>' % self.boiler_name
 
 
-# ============================================
+class Nodes(db.Model): # все узлы и точки котла
+    __tablename__ = 'nodes'
+    id = db.Column(db.Integer, primary_key=True)
+    boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
+    node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
+    index = db.Column(db.Integer)
+    node_name = db.Column(db.String(64))
+    picture = db.Column(db.LargeBinary)
+    norms = db.relationship("Norms", backref='node', lazy='dynamic')
+    measurements = db.relationship("Measurements", backref='node', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Node %r>' % self.node_name
 
 
-class Nodes: # все узлы и точки котла
-    pass
+class Norms(db.Model): # содержит нормативные значения для измерений всех точек
+    __tablename__ = 'norms'
+    id = db.Column(db.Integer, primary_key=True)
+    default = db.Column(db.Integer)
+    minor = db.Column(db.Integer)
+    major = db.Column(db.Integer)
+    defect = db.Column(db.Integer)
+    node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
 
 
-class Norms: # содержит нормативные значения для измерений всех точек
-    pass
+class Measurements(db.Model): # фактические измерения
+    __tablename__ = 'measurements'
+    id = db.Column(db.Integer, primary_key=True)
+    boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
+    inspector_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    measure_date = db.Column(db.DateTime, default=datetime.utcnow)
+    node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
+    value = db.Column(db.Integer)
+
+
+
 
 
 

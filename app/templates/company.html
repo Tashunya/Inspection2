@@ -11,11 +11,11 @@
 
 <p>
     {% if current_user.can(Permission.COMPANY_REGISTER) %}
-    <a class="btn btn-danger btn-sm"
+    <a class="btn btn-danger btn-xs"
     href="{{ url_for('.edit_company', id=company.id) }}">
     Edit Company
     </a>
-    <a class="btn btn-danger btn-sm"> Deactivate Company</a>
+    <a class="btn btn-danger btn-xs"> Deactivate Company</a>
     {% endif %}
 </p>
 
@@ -32,7 +32,7 @@
 
 <p>
     {% if current_user.can(Permission.USER_REGISTER) %}
-    <a class="btn btn-danger btn-sm"
+    <a class="btn btn-danger btn-xs"
     href="{{ url_for('auth.register_user') }}">
     Add New User
     </a>
@@ -41,14 +41,19 @@
 
 <h3>Boilers:</h3>
 <ul>
-    <li>Boiler 1</li>
-    <li>Boiler 2</li>
+    {% for boiler in boilers %}
+    <li>
+        <a href="{{ url_for('boiler.show_boiler', id=boiler.id) }}">
+            {{ boiler.boiler_name }}
+        </a>
+    </li>
+    {% endfor %}
 </ul>
 
 <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
-    <a class="btn btn-danger btn-sm"
-    href="#">
+    <a class="btn btn-danger btn-xs"
+    href="{{ url_for('boiler.create_boiler') }}">
     Add New Boiler
     </a>
     {% endif %}

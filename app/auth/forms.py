@@ -24,10 +24,8 @@ class RegistrationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        self.role.choices = [(role.id, role.name)
-                             for role in Role.query.order_by(Role.name).all()]
-        self.company.choices = [(company.id, company.company_name)
-                                for company in Company.query.order_by(Company.company_name).all()]
+        self.role.choices = [(role.id, role.name) for role in Role.query.all()]
+        self.company.choices = [(company.id, company.company_name) for company in Company.query.all()]
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():

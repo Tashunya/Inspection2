@@ -1,0 +1,9 @@
+<ul>
+    {% for boiler in boilers %}
+    <li>
+        <a href="{{ url_for('boiler.boiler', id=boiler.id) }}">
+            {{ boiler.boiler_name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>

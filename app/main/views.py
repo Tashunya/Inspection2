@@ -3,22 +3,26 @@ from flask_login import login_required, current_user
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, CompanyRegistrationForm, EditCompanyForm
 from .. import db
-from ..models import User, Company, Role, Permission
+from ..models import User, Company, Role, Boiler, Permission
 from ..decorators import permission_required
 
-#=========================================
+
+# =========================================
 # INDEX ROUTES
+# =========================================
+
 
 @main.route('/')
 @login_required
 def index():
-    role = Role.query.filter_by(id=current_user.role_id).first()
     company = Company.query.filter_by(id=current_user.company_id).first()
+    boilers = Boiler.query.filter_by(company_id=current_user.company_id).all()
     if current_user.role_id == 1:
         return redirect(url_for('.inspector'))
     if current_user.role_id == 0:
         return redirect(url_for('.admin'))
-    return render_template('index.html', company=company, role=role)
+    return render_template('index.html', company=company, boilers=boilers)
+
 
 @main.route('/inspector')
 @login_required
@@ -29,6 +33,7 @@ def inspector():
     else:
         abort(403)
 
+
 @main.route('/admin')
 @login_required
 def admin():
@@ -38,16 +43,20 @@ def admin():
     else:
         abort(403)
 
-#====================
+
+# ====================================
 # USER ROUTES
+# ====================================
+
 
 @main.route('/user/<int:id>')
 @login_required
 def user(id):
+    user = User.query.filter_by(id=id).first_or_404()
+    if not current_user.company_access(user.company_id):
+        abort(403)
     company = Company.query.filter_by(id=current_user.company_id).first()
     role = Role.query.filter_by(id=current_user.role_id).first()
-
-    user = User.query.filter_by(id=id).first_or_404()
     return render_template('user.html', user=user, company=company, role=role)
 
 
@@ -97,8 +106,10 @@ def edit_profile_admin(id):
     return render_template('edit_profile.html', form=form, user=user)
 
 
-#===================================
+# ============================================
 # COMPANY ROUTES
+# ============================================
+
 
 @main.route('/register-company', methods=["GET", "POST"])
 @login_required
@@ -119,13 +130,12 @@ def register_company():
 @main.route('/company/<int:id>')
 @login_required
 def company(id):
-    if id == current_user.company_id or current_user.can(Permission.ALL_BOILERS_ACCESS):
-        company = Company.query.filter_by(id=id).first_or_404()
-        employees = User.query.filter_by(company_id=id).order_by(User.username).all()
-        # boilers = Boiler.query.filter_by(company_id=id).order_by().all()
-        return render_template('company.html', company=company, employees=employees)
-    else:
+    if not current_user.company_access(id):
         abort(403)
+    company = Company.query.filter_by(id=id).first_or_404()
+    employees = User.query.filter_by(company_id=id).order_by(User.username).all()
+    boilers = Boiler.query.filter_by(company_id=id).all()
+    return render_template('company.html', company=company, employees=employees, boilers=boilers)
 
 
 @main.route('/edit-company/<int:id>', methods=["GET", "POST"])
@@ -146,3 +156,5 @@ def edit_company(id):
     form.location.data = company.location
     form.about.data = company.about
     return render_template('edit_company.html', form=form, company=company)
+
+

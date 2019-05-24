@@ -57,8 +57,8 @@ def register_user():
     if form.validate_on_submit():
         user = User(email=form.email.data,
                     username=form.username.data,
-                    role_id=int(Role.query.get(form.role.data)),
-                    company_id=int(Company.query.get(form.company.data)),
+                    role_id=int(form.role.data),
+                    company_id=int(form.company.data),
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()

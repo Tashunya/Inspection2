@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Boiler Page {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+<h1>Boiler {{ boiler.boiler_name }} </h1>
+    <h3> <a href=" {{ url_for('main.company', id=boiler.company_id) }} "> {{ company.company_name }} </a></h3>
+</div>
+
+
+<p>
+    {% if current_user.can(Permission.CREATE_BOILER) %}
+    <a class="btn btn-danger btn-xs"
+    href=" {{ url_for('boiler.edit_boiler', id=boiler.id) }}">
+        Edit Boiler
+    </a>
+    {% endif %}
+</p>
+
+{% endblock %}
+
+<!--     -->
