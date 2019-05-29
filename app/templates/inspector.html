@@ -16,7 +16,6 @@
     {% for comp in company_list %}
         {% if not comp.id == 3 %}
         <li>
-
             <a href="{{ url_for('.company', id=comp.id) }}">
                 {{ comp.company_name }}
             </a>

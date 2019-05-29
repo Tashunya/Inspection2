@@ -3,6 +3,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
+from sqlalchemy.orm import backref
 from . import db, login_manager
 
 
@@ -88,7 +89,7 @@ class User(UserMixin, db.Model):
     position = db.Column(db.String(64))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-    users = db.relationship('Measurements', backref='inspector', lazy='dynamic')
+    users = db.relationship('Measurement', backref='inspector', lazy='dynamic')
 
     @property
     def password(self):
@@ -166,31 +167,32 @@ class Company(db.Model):
 class Boiler(db.Model):
     __tablename__ = 'boilers'
     id = db.Column(db.Integer, primary_key=True)
-    boiler_name = db.Column(db.String(64), unique=True, index=True)
+    boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-    nodes = db.relationship('Nodes', backref='boiler', lazy='dynamic')
-    measurements = db.relationship('Measurements', backref='boiler', lazy='dynamic')
+    nodes = db.relationship('Node', backref='boiler', lazy='dynamic')
+    measurements = db.relationship('Measurement', backref='boiler', lazy='dynamic')
 
     def __repr__(self):
         return '<Boiler %r>' % self.boiler_name
 
 
-class Nodes(db.Model): # все узлы и точки котла
+class Node(db.Model): # все узлы и точки котла
     __tablename__ = 'nodes'
     id = db.Column(db.Integer, primary_key=True)
     boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
-    node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
     index = db.Column(db.Integer)
     node_name = db.Column(db.String(64))
     picture = db.Column(db.LargeBinary)
-    norms = db.relationship("Norms", backref='node', lazy='dynamic')
-    measurements = db.relationship("Measurements", backref='node', lazy='dynamic')
+    child_nodes = db.relationship('Node', backref=backref("ParentNode", remote_side=[id]), lazy='dynamic')
+    norms = db.relationship("Norm", backref='node', lazy='dynamic')
+    measurements = db.relationship("Measurement", backref='node', lazy='dynamic')
 
     def __repr__(self):
         return '<Node %r>' % self.node_name
 
 
-class Norms(db.Model): # содержит нормативные значения для измерений всех точек
+class Norm(db.Model): # содержит нормативные значения для измерений всех точек
     __tablename__ = 'norms'
     id = db.Column(db.Integer, primary_key=True)
     default = db.Column(db.Integer)
@@ -200,13 +202,13 @@ class Norms(db.Model): # содержит нормативные значени�
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
 
 
-class Measurements(db.Model): # фактические измерения
+class Measurement(db.Model): # фактические измерения
     __tablename__ = 'measurements'
     id = db.Column(db.Integer, primary_key=True)
     boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
     inspector_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    measure_date = db.Column(db.DateTime, default=datetime.utcnow)
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
+    measure_date = db.Column(db.DateTime, default=datetime.utcnow)
     value = db.Column(db.Integer)
 
 

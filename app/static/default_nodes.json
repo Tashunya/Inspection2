@@ -1,0 +1,589 @@
+[
+  {
+    "index": 1,
+    "node_name": "LOWER FURNACE",
+    "children": [
+                  {
+                    "index": 1,
+                    "node_name": "BOTTOM",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Line 1 (50mm from the seam)",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Line 2 (150mm from the seam)",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Line 3 (150mm from the seam)",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Line 4 (50mm from the seam)",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  }
+                    ]
+                  },
+                  {
+                    "index": 2,
+                    "node_name": "FRONT WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Primary air opening",
+                                    "Elements": 25,
+                                    "Points": 8
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Secondary air opening",
+                                    "Elements": 12,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Tertiary air opening",
+                                    "Elements": 14,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Load burner opening",
+                                    "Elements": 3,
+                                    "Points": 70
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "TV-camera opening",
+                                    "Elements": 1,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "LVHC burner opening",
+                                    "Elements": 1,
+                                    "Points": 66
+                                  },
+                                  {
+                                    "index": 7,
+                                    "node_name": "Liquor burner opening",
+                                    "Elements": 3,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 8,
+                                    "node_name": "Line 1(50mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 152
+                                  },
+                                  {
+                                    "index": 9,
+                                    "node_name": "Line 2(500mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 152
+                                  }
+                               ]
+                  },
+                  {
+                    "index": 3,
+                    "node_name": "LEFT SIDE WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Start-up burner opening",
+                                    "Elements": 4,
+                                    "Points": 26
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Primary air opening",
+                                    "Elements": 19,
+                                    "Points": 8
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Mandoor opening +14600",
+                                    "Elements": 1,
+                                    "Points": 58
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Liquor burner opening",
+                                    "Elements": 3,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "TV-camera opening",
+                                    "Elements": 2,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "Washing opening",
+                                    "Elements": 1,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 7,
+                                    "node_name": "Line 1(50mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 186
+                                  },
+                                  {
+                                    "index": 8,
+                                    "node_name": "Line 2(500mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 186
+                                  }
+                    ]
+                  },
+                  {
+                    "index": 4,
+                    "node_name": "REAR WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Smelt spout",
+                                    "Elements": 6,
+                                    "Points": 16
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Primary air opening",
+                                    "Elements": 25,
+                                    "Points":8
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Secondary air opening",
+                                    "Elements": 15,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Tertiary air opening",
+                                    "Elements": 12,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "Liquor burner opening",
+                                    "Elements": 3,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "Line 1(50mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 152
+                                  },
+                                  {
+                                    "index": 7,
+                                    "node_name": "Line 2(500mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 152
+                                  }
+                    ]
+                  },
+                  {
+                    "index": 5,
+                    "node_name": "RIGHT SIDE WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Start-up burner opening",
+                                    "Elements": 4,
+                                    "Points": 26
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Primary air opening",
+                                    "Elements": 19,
+                                    "Points": 8
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Mandoor opening +14600",
+                                    "Elements": 1,
+                                    "Points": 58
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Liquor burner opening",
+                                    "Elements": 3,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "TV-camera opening",
+                                    "Elements": 2,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "Washing opening",
+                                    "Elements": 1,
+                                    "Points": 12
+                                  },
+                                  {
+                                    "index": 7,
+                                    "node_name": "Line 1(50mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 186
+                                  },
+                                  {
+                                    "index": 8,
+                                    "node_name": "Line 2(500mm above the seam +31.100)",
+                                    "Elements": 1,
+                                    "Points": 186
+                                  }
+                                ]
+                  }
+    ]
+  },
+  {
+    "index": 2,
+    "node_name": "UPPER FURNACE",
+    "children": [
+                  {
+                    "index": 1,
+                    "node_name": "SCREEN",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Screen panels",
+                                    "Elements": 19,
+                                    "Points": 10
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 2,
+                    "node_name": "FURNACE ROOF",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Line 1",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Line 2",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 3,
+                    "node_name": "LEFT SIDE WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Sootblower opening",
+                                    "Elements": 28,
+                                    "Points": 6
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Mandoor opening +36500",
+                                    "Elements": 1,
+                                    "Points": 58
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Line 1",
+                                    "Elements": 1,
+                                    "Points": 178
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 4,
+                    "node_name": "REAR WALL NOSE TUBES",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Line 1",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Line 2",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Line 3",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "Line 4",
+                                    "Elements": 1,
+                                    "Points": 160
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 5,
+                    "node_name": "RIGHT SIDE WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Sootblower opening",
+                                    "Elements": 28,
+                                    "Points": 6
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "Mandoor opening +36500",
+                                    "Elements": 1,
+                                    "Points": 58
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "Line 1",
+                                    "Elements": 1,
+                                    "Points": 178
+                                  }
+                    ]
+                  },
+                  {
+                    "index": 6,
+                    "node_name": "FRONT WALL",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Line 1",
+                                    "Elements": 1,
+                                    "Points": 152
+                                  }
+                                ]
+                  }
+                ]
+  },
+  {
+    "index": 3,
+    "node_name": "SUPERHEATER",
+    "children": [
+                   {
+                    "index": 1,
+                    "node_name": "SH IB",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Lower bends",
+                                    "Elements": 39,
+                                    "Points": 14
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "SB working area, line 1",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "SB working area, line 2",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "SB working area, line 3",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "SB working area, line 4",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "SB working area, line 5",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  }
+                    ]
+                  },
+                  {
+                    "index": 2,
+                    "node_name": "SH II",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Lower bends",
+                                    "Elements": 39,
+                                    "Points": 26
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "SB working area, line 1",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "SB working area, line 2",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "SB working area, line 3",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "SB working area, line 4",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "SB working area, line 5",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 7,
+                                    "node_name": "SB working area, line 6",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 8,
+                                    "node_name": "SB working area, line 7",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 9,
+                                    "node_name": "SB working area, line 8",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 10,
+                                    "node_name": "SB working area, line 9",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 11,
+                                    "node_name": "SB working area, line 10",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 3,
+                    "node_name": "SH III",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Lower bends",
+                                    "Elements": 39,
+                                    "Points": 23
+                                  },
+                                  {
+                                    "index": 2,
+                                    "node_name": "SB working area, line 1",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 3,
+                                    "node_name": "SB working area, line 2",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 4,
+                                    "node_name": "SB working area, line 3",
+                                    "Elements": 39,
+                                    "Points": 5
+                                  },
+                                  {
+                                    "index": 5,
+                                    "node_name": "SB working area, line 4",
+                                    "Elements": 39,
+                                    "Points": 5
+                                  },
+                                  {
+                                    "index": 6,
+                                    "node_name": "SB working area, line 5",
+                                    "Elements": 39,
+                                    "Points": 5
+                                  },{
+                                    "index": 7,
+                                    "node_name": "SB working area, line 5A",
+                                    "Elements": 39,
+                                    "Points": 5
+                                  },
+                                  {
+                                    "index": 8,
+                                    "node_name": "SB working area, line 6",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 9,
+                                    "node_name": "SB working area, line 7",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 10,
+                                    "node_name": "SB working area, line 8",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 11,
+                                    "node_name": "SB working area, line 9",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  },
+                                  {
+                                    "index": 12,
+                                    "node_name": "SB working area, line 10",
+                                    "Elements": 39,
+                                    "Points": 1
+                                  }
+                                ]
+                  },
+                  {
+                    "index": 4,
+                    "node_name": "SH IA",
+                    "children": [
+                                  {
+                                    "index": 1,
+                                    "node_name": "Lower bends",
+                                    "Elements": 39,
+                                    "Points": 2
+                                  }
+                                ]
+                  }
+    ]
+}
+]

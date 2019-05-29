@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Add Node{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <h1>Add Nodes</h1>
+</div>
+
+<div class="container">
+    <ul class="nav nav-tabs">
+        {% for block in structure %}
+        <li><a href="#"> {{ block.node_name }} </a></li>
+        {% endfor %}
+    </ul>
+
+    {% for block in structure %}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Level 1</th>
+                <th scope="col">Level 2</th>
+                <th scope="col">Elements</th>
+                <th scope="col">Points</th>
+            </tr>
+        </thead>
+        {% for level_1 in block.children %}
+        <tbody>
+            <tr>
+                <th scope="row"> {{ level_1.index }} </th>
+                <td>
+                    <input name="{{ level_1.index }}" value="{{ level_1.node_name }}" readonly>
+                </td>
+                <td>
+                    <table>
+                        {% for level_2 in level_1.children %}
+                        <tr>
+                            <td><input class="level_2_nodes" name="{{ level_2.index }}" value="{{ level_2.node_name }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        {% for level_2 in level_1.children %}
+                        <tr>
+                            <td><input class="figures" name="Element{{level_2.index}}" value="{{ level_2.Elements }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        {% for level_2 in level_1.children %}
+                        <tr>
+                            <td><input class="figures" name="Point{{level_2.index}}" value="{{ level_2.Points }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+    {% endfor %}
+
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>{{ form.submit() }}</p>
+    </form>
+
+</div>
+
+
+{% endblock %}
