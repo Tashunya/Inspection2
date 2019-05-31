@@ -1,15 +1,13 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Boiler Page {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-<h1>Boiler {{ boiler.boiler_name }} </h1>
     <h3> <a href=" {{ url_for('main.company', id=boiler.company_id) }} "> {{ company.company_name }} </a></h3>
-</div>
-
-
-<p>
+    <h1>Boiler {{ boiler.boiler_name }} </h1>
+    <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
     <a class="btn btn-danger btn-xs"
     href=" {{ url_for('boiler.edit_boiler', id=boiler.id) }}">
@@ -17,25 +15,95 @@
     </a>
     {% endif %}
 </p>
+</div>
 
+<form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.block.label }}<br>
+        {{ form.block }}
+    </p>
+    <p>
+        {{ form.level_1.label }}<br>
+        {{ form.level_1 }}
+    </p>
+    <p>
+        {{ form.level_2.label }}<br>
+        {{ form.level_2 }}
+    </p>
+
+    <input type="submit" value="Choose element">
+</form>
+
+<script>
+    $( function() {
+        $('#block').change( function() {
+            $.get("http://192.168.31.243:5000/boiler/children/" + this.value, success, "json");
+        });
+
+        function success(childrenArray) {
+        $("select[id='level_1']").find("option").remove();
+        $("select[id='level_2']").find("option").remove()
+        var levelOneOptions = "<option selected value='__None'></option>";
+        for(var i = 0; i < childrenArray.length; i++) {
+            levelOneOptions += "<option value='" + childrenArray[i].id + "'>" + childrenArray[i].node_name + "</option>";
+        }
+        $("select[id='level_1']").append(levelOneOptions);
+        };
+     });
+</script>
+
+<script>
+    $( function() {
+        $('#level_1').change( function() {
+            $.get("http://192.168.31.243:5000/boiler/children/" + this.value, success, "json");
+        });
+
+        function success(childrenArray) {
+        $("select[id='level_2']").find("option").remove();
+        var levelOneOptions = "<option selected value='__None'></option>"
+        for(var i = 0; i < childrenArray.length; i++) {
+            levelOneOptions += "<option value='" + childrenArray[i].id + "'>" + childrenArray[i].node_name + "</option>";
+        }
+        $("select[id='level_2']").append(levelOneOptions);
+        };
+     });
+</script>
+
+
+<h4>Measurements</h4>
 <div class="btn-group btn-group-sm" role="group" aria-label="year">
-    <button type="button" class="btn btn-outline-info">2016</button>
+    <button type="button" class="btn info">2016</button>
     <button type="button" class="btn btn-outline-info">2017</button>
     <button type="button" class="btn btn-outline-info">2018</button>
     <button type="button" class="btn btn-outline-info">2019</button>
 </div>
+<h5>Element Name</h5>
+<table class="table table-bordered table-hover">
+    <thead>
+        <th scope="col">#</th>
+        <th scope="col">Point Index</th>
+        <th scope="col">Value</th>
+        <th scope="col">Origin</th>
+        <th scope="col">Minor</th>
+        <th scope="col">Major</th>
+        <th scope="col">Defect</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>4,5</td>
+            <td>6,0</td>
+            <td>5.3</td>
+            <td>4.5</td>
+            <td>3.5</td>
+        </tr>
+    </tbody>
+</table>
 
-<p>
-    <div class="btn-group">
-      <button type="button" class="btn btn-outline-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Action
-      </button>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" href="#">Lower Furnace</a>
-        <a class="dropdown-item" href="#">Upper Furnace</a>
-        <a class="dropdown-item" href="#">Superheater</a>
-      </div>
-    </div>
-</p>
+{% endblock %}
+
+{% block scripts %}
 
 {% endblock %}

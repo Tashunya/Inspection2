@@ -1,15 +1,10 @@
-from flask import render_template, session, redirect, url_for, current_app, flash, abort
+from flask import render_template, session, redirect, url_for, current_app, flash, abort, json, jsonify
 from flask_login import login_required, current_user
 from . import boiler
-from .forms import CreateBoilerForm, AddNodeForm, CreateBoilerNodesForm
+from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm
 from .. import db
 from ..models import User, Company, Role, Boiler, Permission, Node
 from ..decorators import permission_required
-import json
-
-
-from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField, FieldList, FormField
-
 
 # =====================================================
 # BOILER ROUTES
@@ -39,54 +34,60 @@ def add_nodes(id):
     with open('app/static/default_nodes.json', 'r') as f:
         structure = json.load(f)
 
+    text_json = open('app/static/default_nodes.json', 'r').read()
+
     form = CreateBoilerNodesForm()
+
     if form.validate_on_submit():
-        for block in structure:
-            new_block = Node(boiler_id=boiler_id,
-                             index=block.get('index'),
-                             node_name=block.get('node_name')
-                             )
-            db.session.add(new_block)
-            db.session.commit()
-            db.session.expire_all()
-
-            for child_1 in block.get('children'):
-                new_child_1 = Node(boiler_id=boiler_id,
-                                   parent_id=new_block.id,
-                                   index=child_1.get('index'),
-                                   node_name=child_1.get('node_name')
-                                   )
-                db.session.add(new_child_1)
-                db.session.commit()
-                db.session.expire_all()
-
-                for child_2 in child_1.get('children'):
-                    new_child_2 = Node(boiler_id=boiler_id,
-                                       parent_id=new_child_1.id,
-                                       index=child_2.get('index'),
-                                       node_name=child_2.get('node_name')
-                                       )
-                    db.session.add(new_child_2)
-                    db.session.commit()
-                    db.session.expire_all()
-
-                    elements = child_2.get("Elements")
-                    points = child_2.get("Points")
-
-                    for element in range(1, elements+1):
-                        for point in range(1, points+1):
-                            new_point = Node(boiler_id=boiler_id,
-                                             parent_id=new_child_2.id,
-                                             index=point,
-                                             node_name='Element '+ str(element) + ' Point ' + str(point)
-                                             )
-                            db.session.add(new_point)
-                            db.session.commit()
-                            db.session.expire_all()
-        flash("Nodes created")
+        flash("str: " + form.final_structure.data)
+        #updated_structure = json.loads(form.final_structure.data)
+        #flash("els: " + str(len(updated_structure)))
+        # for block in updated_structure:
+        #     new_block = Node(boiler_id=boiler_id,
+        #                      index=block.get('index'),
+        #                      node_name=block.get('node_name')
+        #                      )
+        #     db.session.add(new_block)
+        #     db.session.commit()
+        #     db.session.expire_all()
+        #
+        #     for child_1 in block.get('children'):
+        #         new_child_1 = Node(boiler_id=boiler_id,
+        #                            parent_id=new_block.id,
+        #                            index=child_1.get('index'),
+        #                            node_name=child_1.get('node_name')
+        #                            )
+        #         db.session.add(new_child_1)
+        #         db.session.commit()
+        #         db.session.expire_all()
+        #
+        #         for child_2 in child_1.get('children'):
+        #             new_child_2 = Node(boiler_id=boiler_id,
+        #                                parent_id=new_child_1.id,
+        #                                index=child_2.get('index'),
+        #                                node_name=child_2.get('node_name')
+        #                                )
+        #             db.session.add(new_child_2)
+        #             db.session.commit()
+        #             db.session.expire_all()
+        #
+        #             elements = child_2.get("Elements")
+        #             points = child_2.get("Points")
+        #
+        #             for element in range(1, elements+1):
+        #                 for point in range(1, points+1):
+        #                     new_point = Node(boiler_id=boiler_id,
+        #                                      parent_id=new_child_2.id,
+        #                                      index=point,
+        #                                      node_name='Element '+ str(element) + ' Point ' + str(point)
+        #                                      )
+        #                     db.session.add(new_point)
+        #                     db.session.commit()
+        #                     db.session.expire_all()
+        # flash("Nodes created")
         return redirect(url_for("boiler.show_boiler", id=boiler_id))
 
-    return render_template('boiler/add_nodes.html', id=id, form=form, structure=structure)
+    return render_template('boiler/add_nodes.html', id=id, form=form, structure=structure, text_json=text_json)
 
 
 @boiler.route('/<int:id>')
@@ -96,7 +97,18 @@ def show_boiler(id):
     if not current_user.company_access(boiler.company_id):
         abort(403)
     company = Company.query.filter_by(id=boiler.company_id).first()
-    return render_template('boiler/show_boiler.html', boiler=boiler, company=company)
+    form = NodeSelectForm(boiler_id=boiler.id)
+
+    # form.level_1.query = Node.query.filter(Choice.id >1)
+    return render_template('boiler/show_boiler.html', boiler=boiler, company=company, form=form)
+
+
+@boiler.route('/children/<node>', methods=["GET", "POST"])
+@login_required
+def level_1(node):
+    level_elements = Node.query.filter_by(parent_id=node).all()
+    level_1_Array = [element.as_dict() for element in level_elements]
+    return jsonify(level_1_Array)
 
 
 @boiler.route('/edit-boiler/<id>', methods=["GET", "POST"])

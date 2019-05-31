@@ -5,6 +5,7 @@
 
 {% block page_content %}
 
+
 <div class="page-header">
     <h1>Add Nodes</h1>
 </div>
@@ -32,13 +33,13 @@
             <tr>
                 <th scope="row"> {{ level_1.index }} </th>
                 <td>
-                    <input name="{{ level_1.index }}" value="{{ level_1.node_name }}" readonly>
+                    <input name="{{ block.index }}_{{ level_1.index }}" value="{{ level_1.node_name }}" readonly>
                 </td>
                 <td>
                     <table>
                         {% for level_2 in level_1.children %}
                         <tr>
-                            <td><input class="level_2_nodes" name="{{ level_2.index }}" value="{{ level_2.node_name }}"></td>
+                            <td><input class="level_2_nodes" name="{{ block.index }}_{{level_1.index}}_{{ level_2.index }}"  value="{{ level_2.node_name }}"></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -47,7 +48,7 @@
                     <table>
                         {% for level_2 in level_1.children %}
                         <tr>
-                            <td><input class="figures" name="Element{{level_2.index}}" value="{{ level_2.Elements }}"></td>
+                            <td><input class="figures" name="{{ block.index }}_{{level_1.index}}_{{ level_2.index }}_Elements" value="{{ level_2.Elements }}"></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -56,7 +57,7 @@
                     <table>
                         {% for level_2 in level_1.children %}
                         <tr>
-                            <td><input class="figures" name="Point{{level_2.index}}" value="{{ level_2.Points }}"></td>
+                            <td><input class="figures" name="{{ block.index }}_{{level_1.index}}_{{ level_2.index }}_Points" value="{{ level_2.Points }}"></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -73,6 +74,9 @@
     </form>
 
 </div>
+
+<script type="text/javascript">var text_json = `{{text_json}}` </script>
+<script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
 
 
 {% endblock %}
