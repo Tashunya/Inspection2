@@ -17,9 +17,9 @@ from ..decorators import permission_required
 def index():
     company = Company.query.filter_by(id=current_user.company_id).first()
     boilers = Boiler.query.filter_by(company_id=current_user.company_id).all()
-    if current_user.role_id == 1:
+    if current_user.role.name == "Inspector":
         return redirect(url_for('.inspector'))
-    if current_user.role_id == 0:
+    if current_user.role.name == "Administrator":
         return redirect(url_for('.admin'))
     return render_template('index.html', company=company, boilers=boilers)
 
@@ -27,7 +27,7 @@ def index():
 @main.route('/inspector')
 @login_required
 def inspector():
-    if current_user.role_id == 1:
+    if current_user.role.name == "Inspector":
         company_list = Company.query.order_by(Company.company_name).all()
         return render_template('inspector.html', company_list=company_list)
     else:
@@ -37,7 +37,7 @@ def inspector():
 @main.route('/admin')
 @login_required
 def admin():
-    if current_user.role_id == 0:
+    if current_user.role.name == "Administrator":
         company_list = Company.query.order_by(Company.company_name).all()
         return render_template('admin.html', company_list=company_list)
     else:

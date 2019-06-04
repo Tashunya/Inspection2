@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
+from wtforms_alchemy import QuerySelectField
+from wtforms.validators import DataRequired, Email, Length, EqualTo
 from wtforms import ValidationError
 from ..models import User, Role, Company
 
@@ -15,8 +16,8 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(min=6, max=64), Email()])
     username = StringField('Full Name', validators=[DataRequired(), Length(min=6, max=64)])
-    role = SelectField("Role", choices=[], coerce=int)
-    company = SelectField("Company", choices=[], coerce=int)
+    role = QuerySelectField("Role", allow_blank=True, get_label='name')
+    company = QuerySelectField("Company", allow_blank=True, get_label='company_name')
     password = PasswordField('Password',
                              validators=[DataRequired(), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Confirm password', validators=[DataRequired()])
@@ -24,8 +25,8 @@ class RegistrationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        self.role.choices = [(role.id, role.name) for role in Role.query.all()]
-        self.company.choices = [(company.id, company.company_name) for company in Company.query.all()]
+        self.role.query_factory = lambda: Role.query.order_by(Role.id)
+        self.company.query_factory = lambda: Company.query.order_by(Company.company_name)
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():

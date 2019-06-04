@@ -12,7 +12,7 @@
 <h3> Companies: </h3>
 <ul>
     {% for comp in company_list %}
-        {% if not comp.id == 3 %}
+        {% if comp.company_name != 'Inspection Company' %}
         <li>
 
             <a href="{{ url_for('.company', id=comp.id) }}">

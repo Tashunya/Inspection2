@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, HiddenField
 from wtforms_alchemy import QuerySelectField
-from wtforms.validators import DataRequired, Length, Email, Optional
-from wtforms import ValidationError
-from ..models import Role, User, Company, Node, Boiler
+from wtforms.validators import DataRequired, Length
+from ..models import Company, Node, Boiler
 
 
 class CreateBoilerForm(FlaskForm):

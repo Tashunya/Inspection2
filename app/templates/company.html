@@ -39,6 +39,7 @@
     {% endif %}
 </p>
 
+{% if company.company_name != "Inspection Company" %}
 <h3>Boilers:</h3>
 <ul>
     {% for boiler in boilers %}
@@ -50,6 +51,7 @@
     {% endfor %}
 </ul>
 
+
 <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
     <a class="btn btn-danger btn-xs"
@@ -58,5 +60,7 @@
     </a>
     {% endif %}
 </p>
+
+{%endif%}
 
 {% endblock %}

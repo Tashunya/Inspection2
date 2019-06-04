@@ -17,23 +17,11 @@
 </p>
 </div>
 
-<form method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.block.label }}<br>
-        {{ form.block }}
-    </p>
-    <p>
-        {{ form.level_1.label }}<br>
-        {{ form.level_1 }}
-    </p>
-    <p>
-        {{ form.level_2.label }}<br>
-        {{ form.level_2 }}
-    </p>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+    <input type="submit" class="btn btn-info btn-sm" value="Choose element">
+</div>
 
-    <input type="submit" value="Choose element">
-</form>
 
 <script>
     $( function() {
@@ -70,15 +58,15 @@
      });
 </script>
 
-
-<h4>Measurements</h4>
+<div class="col-md-12">
+    <h3>Measurements</h3>
 <div class="btn-group btn-group-sm" role="group" aria-label="year">
-    <button type="button" class="btn info">2016</button>
+    <button type="button" class="btn btn-info">2016</button>
     <button type="button" class="btn btn-outline-info">2017</button>
     <button type="button" class="btn btn-outline-info">2018</button>
     <button type="button" class="btn btn-outline-info">2019</button>
 </div>
-<h5>Element Name</h5>
+<div id="element-name"><h3>Element Name</h3></div>
 <table class="table table-bordered table-hover">
     <thead>
         <th scope="col">#</th>
@@ -99,8 +87,28 @@
             <td>4.5</td>
             <td>3.5</td>
         </tr>
+        <tr>
+            <td>2</td>
+            <td>2</td>
+            <td>4,5</td>
+            <td>6,0</td>
+            <td>5.3</td>
+            <td>4.5</td>
+            <td>3.5</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>3</td>
+            <td>4,5</td>
+            <td>6,0</td>
+            <td>5.3</td>
+            <td>4.5</td>
+            <td>3.5</td>
+        </tr>
     </tbody>
 </table>
+</div>
+
 
 {% endblock %}
 

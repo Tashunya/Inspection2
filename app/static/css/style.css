@@ -3,14 +3,17 @@ body {
 font-family: 'Montserrat', sans-serif;
 };
 
+div .page-header {
+margin: 20px 0 20px;
+}
 
-input.figures {
+input .figures {
 width: 60px;
 text-align: center;
 }
 
 
-input.level_2_nodes {
+input .level_2_nodes {
 width: 400px;
 }
 
