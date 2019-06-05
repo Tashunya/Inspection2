@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms_alchemy import QuerySelectField
 from wtforms.validators import DataRequired, Length, Email, Optional
 from wtforms import ValidationError
 from ..models import Role, User, Company
@@ -16,18 +17,16 @@ class EditProfileAdminForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(min=6, max=64), Email()])
     username = StringField('Full Name', validators=[DataRequired(), Length(min=6, max=64)])
     confirmed = BooleanField('Confirmed')
-    role = SelectField("Role", choices=[], coerce=int)
-    company = SelectField("Company", choices=[], coerce=int)
+    role = QuerySelectField("Role", allow_blank=True, get_label='name')
+    company = QuerySelectField("Company", allow_blank=True, get_label='company_name')
     position = StringField('Position', validators=[Length(min=0, max=64)])
     contact_number = StringField('Contact Number', validators=[Length(min=0, max=64)])
     submit = SubmitField('Submit')
 
     def __init__(self, user, *args, **kwargs):
         super(EditProfileAdminForm, self).__init__(*args, **kwargs)
-        self.role.choices = [(role.id, role.name)
-                             for role in Role.query.order_by(Role.name).all()]
-        self.company.choices = [(company.id, company.company_name)
-                                for company in Company.query.order_by(Company.company_name).all()]
+        self.role.query_factory = lambda: Role.query.order_by(Role.id)
+        self.company.query_factory = lambda: Company.query.order_by(Company.company_name)
         self.user = user
 
     def validate_email(self, field):

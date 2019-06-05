@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm
 from .. import db
-from ..models import User, Company, Role, Boiler, Permission, Node
+from ..models import Company, Boiler, Permission, Node, Norm
 from ..decorators import permission_required
 
 # =====================================================
@@ -40,8 +40,11 @@ def add_nodes(id):
 
     if form.validate_on_submit():
         flash("str: " + form.final_structure.data)
-        #updated_structure = json.loads(form.final_structure.data)
-        #flash("els: " + str(len(updated_structure)))
+
+        updated_structure = json.loads(form.final_structure.data)
+
+        flash("els: " + str(len(updated_structure)))
+
         # for block in updated_structure:
         #     new_block = Node(boiler_id=boiler_id,
         #                      index=block.get('index'),
@@ -82,6 +85,13 @@ def add_nodes(id):
         #                                      node_name='Element '+ str(element) + ' Point ' + str(point)
         #                                      )
         #                     db.session.add(new_point)
+        #                     db.session.commit()
+        #                     new_point_norm = Norm(node_id=new_point.id,
+        #                                           default=6.5,
+        #                                           minor=6.0,
+        #                                           major=5.0,
+        #                                           defect=4.0)
+        #                     db.session.add(new_point_norm)
         #                     db.session.commit()
         #                     db.session.expire_all()
         # flash("Nodes created")

@@ -198,10 +198,10 @@ class Node(db.Model): # все узлы и точки котла
 class Norm(db.Model): # содержит нормативные значения для измерений всех точек
     __tablename__ = 'norms'
     id = db.Column(db.Integer, primary_key=True)
-    default = db.Column(db.Integer)
-    minor = db.Column(db.Integer)
-    major = db.Column(db.Integer)
-    defect = db.Column(db.Integer)
+    default = db.Column(db.Float)
+    minor = db.Column(db.Float)
+    major = db.Column(db.Float)
+    defect = db.Column(db.Float)
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
 
 
@@ -212,7 +212,7 @@ class Measurement(db.Model): # фактические измерения
     inspector_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
     measure_date = db.Column(db.DateTime, default=datetime.utcnow)
-    value = db.Column(db.Integer)
+    value = db.Column(db.Float)
 
 
 

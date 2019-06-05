@@ -88,8 +88,8 @@ def edit_profile_admin(id):
         user.email = form.email.data
         user.username = form.username.data
         user.confirmed = form.confirmed.data
-        user.role = Role.query.get(form.role.data)
-        user.company = Company.query.get(form.company.data)
+        user.role = Role.query.get(form.role.data.id)
+        user.company = Company.query.get(form.company.data.id)
         user.position = form.position.data
         user.contact_number = form.contact_number.data
         db.session.add(user)
