@@ -3,44 +3,43 @@
 {% block title %}RB Inspection{% endblock %}
 
 {% block head %}
-{{ super() }}
-        <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/style.css') }}" />
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap&subset=latin-ext" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 
-{% endblock %}
+{{ super() }}
+<link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='style.css') }}" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+  integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap&subset=latin-ext" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+{% endblock head %}
 
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}"><i class="fas fa-ruler-combined"></i> RB </a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index' )}}">Home</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('main.user', id=current_user.id) }}">Profile</a></li>
-                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
-                {% else %}
-                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
-                {% endif %}
-            </ul>
-        </div>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}"><i class="fas fa-ruler-combined"></i> RB</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+          </li>
+        </ul>
+      </div>
+           <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item active"><a class="nav-link" href="{{ url_for('main.user', id=current_user.id) }}">Profile</a></li>
+            <li class="nav-item active"><a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a></li>
+            {% else %}
+            <li class="nav-item active"><a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a></li>
+            {% endif %}
+        </ul>
     </div>
-</div>
-{% endblock %}
+</nav>
+{% endblock navbar%}
 
 {% block content %}
 <div class="container">

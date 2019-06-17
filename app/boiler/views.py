@@ -3,7 +3,11 @@ from flask_login import login_required, current_user
 from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm
 from .. import db
-from ..models import Company, Boiler, Permission, Node, Norm
+from ..models import Company, Boiler, Permission, Node, Norm, Measurement
+from sqlalchemy.orm import aliased
+from sqlalchemy import and_, or_
+from datetime import datetime
+
 from ..decorators import permission_required
 
 # =====================================================
@@ -11,7 +15,7 @@ from ..decorators import permission_required
 # =====================================================
 
 
-@boiler.route('/create', methods=["GET", "POST"])
+@boiler.route('/create', methods=["GET", "POST"])  # create boiler
 @login_required
 @permission_required(Permission.CREATE_BOILER)
 def create_boiler():
@@ -26,7 +30,7 @@ def create_boiler():
     return render_template("boiler/create_boiler.html", form=form)
 
 
-@boiler.route('<int:id>/add-nodes', methods=["GET", "POST"])
+@boiler.route('<int:id>/add-nodes', methods=["GET", "POST"])  # add boiler structure and norms
 @login_required
 @permission_required(Permission.CREATE_BOILER)
 def add_nodes(id):
@@ -34,18 +38,18 @@ def add_nodes(id):
     with open('app/static/default_nodes.json', 'r') as f:
         structure = json.load(f)
 
-    text_json = open('app/static/default_nodes.json', 'r').read()
+    # text_json = open('app/static/default_nodes.json', 'r').read()
 
     form = CreateBoilerNodesForm()
 
     if form.validate_on_submit():
-        flash("str: " + form.final_structure.data)
+        # flash("str: " + form.final_structure.data)
+        #
+        # updated_structure = json.loads(form.final_structure.data)
+        #
+        # flash("els: " + str(len(updated_structure)))
 
-        updated_structure = json.loads(form.final_structure.data)
-
-        flash("els: " + str(len(updated_structure)))
-
-        # for block in updated_structure:
+        # for block in structure:
         #     new_block = Node(boiler_id=boiler_id,
         #                      index=block.get('index'),
         #                      node_name=block.get('node_name')
@@ -89,18 +93,18 @@ def add_nodes(id):
         #                     new_point_norm = Norm(node_id=new_point.id,
         #                                           default=6.5,
         #                                           minor=6.0,
-        #                                           major=5.0,
-        #                                           defect=4.0)
+        #                                           major=5.2,
+        #                                           defect=4.5)
         #                     db.session.add(new_point_norm)
         #                     db.session.commit()
         #                     db.session.expire_all()
         # flash("Nodes created")
         return redirect(url_for("boiler.show_boiler", id=boiler_id))
 
-    return render_template('boiler/add_nodes.html', id=id, form=form, structure=structure, text_json=text_json)
+    return render_template('boiler/add_nodes.html', id=id, form=form, structure=structure)
 
 
-@boiler.route('/<int:id>')
+@boiler.route('/<int:id>')  # show boiler info
 @login_required
 def show_boiler(id):
     boiler = Boiler.query.filter_by(id=id).first_or_404()
@@ -108,20 +112,10 @@ def show_boiler(id):
         abort(403)
     company = Company.query.filter_by(id=boiler.company_id).first()
     form = NodeSelectForm(boiler_id=boiler.id)
-
-    # form.level_1.query = Node.query.filter(Choice.id >1)
     return render_template('boiler/show_boiler.html', boiler=boiler, company=company, form=form)
 
 
-@boiler.route('/children/<node>', methods=["GET", "POST"])
-@login_required
-def level_1(node):
-    level_elements = Node.query.filter_by(parent_id=node).all()
-    level_1_Array = [element.as_dict() for element in level_elements]
-    return jsonify(level_1_Array)
-
-
-@boiler.route('/edit-boiler/<id>', methods=["GET", "POST"])
+@boiler.route('/edit-boiler/<id>', methods=["GET", "POST"])  # edit boiler info
 @login_required
 @permission_required(Permission.CREATE_BOILER)
 def edit_boiler(id):
@@ -137,6 +131,55 @@ def edit_boiler(id):
     form.boiler_name.data = boiler.boiler_name
     form.company.data = boiler.company
     return render_template('boiler/edit_boiler.html', boiler=boiler, form=form)
+
+
+# =============================
+# AUXILIARY ROUTES
+# =============================
+
+
+@boiler.route('/children/<node>', methods=["GET", "POST"])  # get json with children nodes
+@login_required
+def level(node):
+    level_elements = Node.query.filter_by(parent_id=node).all()
+    level_array = [element.as_dict() for element in level_elements]
+    return jsonify(level_array)
+
+
+@boiler.route('/table/<node>', methods=["GET", "POST"])  # get json with measurements of chosen node
+@login_required
+def table(node):
+
+    ''' SELECT nodes.id, nodes.node_name, measurements.measure_date, COALESCE(measurements.value, 0),
+    norms."default", norms.minor, norms.major, norms.defect
+    FROM public.nodes as nodes
+    LEFT JOIN public.norms as norms
+    ON nodes.id = norms.node_id
+    LEFT JOIN public.measurements as measurements
+    ON nodes.id = measurements.node_id
+    WHERE parent_id = 3
+    ORDER BY nodes.id; '''
+
+    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value, Norm.default, Norm.minor,
+                         Norm.major, Norm.defect). \
+        outerjoin(Norm, Norm.node_id == Node.id). \
+        outerjoin(Measurement, Measurement.node_id == Node.id). \
+        filter(Node.parent_id == node). \
+        filter(Measurement.value != None).all()
+
+    table_dic = {}
+
+    for node in table_query:
+        year = node[1].year
+        if not str(year) in table_dic:
+            table_dic[str(year)] = []
+        table_dic[str(year)].append(node)
+
+    return jsonify(table_dic)
+
+
+
+
 
 
 

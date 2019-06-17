@@ -4,20 +4,13 @@
 {% block title %}Add Node{% endblock %}
 
 {% block page_content %}
-
-
 <div class="page-header">
     <h1>Add Nodes</h1>
 </div>
 
-<div class="container">
-    <ul class="nav nav-tabs">
-        {% for block in structure %}
-        <li><a href="#"> {{ block.node_name }} </a></li>
-        {% endfor %}
-    </ul>
 
     {% for block in structure %}
+    <h3 class="block_name"> {{ block.node_name }} </h3>
     <table class="table">
         <thead class="thead-dark">
             <tr>
@@ -73,9 +66,8 @@
         <p>{{ form.submit() }}</p>
     </form>
 
-</div>
 
-<script type="text/javascript">var text_json = `{{text_json}}` </script>
+<!--<script type="text/javascript">var text_json = `{{text_json}}` </script>-->
 <script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
 
 

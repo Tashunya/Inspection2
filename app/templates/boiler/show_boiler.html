@@ -17,16 +17,18 @@
 </p>
 </div>
 
+<!-- CHOOSE BOILER ELEMENT -->
+
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
-    <input type="submit" class="btn btn-info btn-sm" value="Choose element">
+    <input id="chooseNode" type="submit" class="btn btn-info btn-sm" value="Choose element">
 </div>
 
 
 <script>
     $( function() {
         $('#block').change( function() {
-            $.get("http://192.168.31.243:5000/boiler/children/" + this.value, success, "json");
+            $.get("/boiler/children/" + this.value, success, "json");
         });
 
         function success(childrenArray) {
@@ -44,7 +46,7 @@
 <script>
     $( function() {
         $('#level_1').change( function() {
-            $.get("http://192.168.31.243:5000/boiler/children/" + this.value, success, "json");
+            $.get("/boiler/children/" + this.value, success, "json");
         });
 
         function success(childrenArray) {
@@ -60,15 +62,21 @@
 
 <div class="col-md-12">
     <h3>Measurements</h3>
+
+<!--  ELEMENT NAME   -->
+
+<h3><div id="elementName"> </div></h3>
+
+
+<!--  BUTTON GROUP WITH YEARS  -->
+
 <div class="btn-group btn-group-sm" role="group" aria-label="year">
-    <button type="button" class="btn btn-info">2016</button>
-    <button type="button" class="btn btn-outline-info">2017</button>
-    <button type="button" class="btn btn-outline-info">2018</button>
-    <button type="button" class="btn btn-outline-info">2019</button>
 </div>
-<div id="element-name"><h3>Element Name</h3></div>
+
+<!--  RESULTS IN TABLE  -->
+
 <table class="table table-bordered table-hover">
-    <thead>
+    <thead class="thead-dark">
         <th scope="col">#</th>
         <th scope="col">Point Index</th>
         <th scope="col">Value</th>
@@ -78,33 +86,6 @@
         <th scope="col">Defect</th>
     </thead>
     <tbody>
-        <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>4,5</td>
-            <td>6,0</td>
-            <td>5.3</td>
-            <td>4.5</td>
-            <td>3.5</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>2</td>
-            <td>4,5</td>
-            <td>6,0</td>
-            <td>5.3</td>
-            <td>4.5</td>
-            <td>3.5</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>3</td>
-            <td>4,5</td>
-            <td>6,0</td>
-            <td>5.3</td>
-            <td>4.5</td>
-            <td>3.5</td>
-        </tr>
     </tbody>
 </table>
 </div>
@@ -113,5 +94,53 @@
 {% endblock %}
 
 {% block scripts %}
+
+<script>
+    $('#chooseNode').click( function() {
+        var block = $('#block option:selected').text();
+        var level_1 = $('#level_1 option:selected').text();
+        var level_2 = $('#level_2 option:selected').text();
+        $('#elementName').html(block + '/' + level_1 + '/' + level_2)
+
+        var chosenNode = $('#level_2').val();
+
+        $.get("/boiler/table/" + chosenNode, chooseElement, "json");
+
+        function chooseElement(tableArray) {
+            var btnGroup = $(".btn-group");
+            btnGroup.find("button").remove();
+            var measuresYears = Object.keys(tableArray);
+            var lastYear = measuresYears[measuresYears.length-1];
+
+            for(var i = 0; i < measuresYears.length; i++) {
+                var button = '<button type="button" class="btn btn-outline-info">' + measuresYears[i] + '</button>'
+                btnGroup.append(button);
+            };
+
+            var lastYearData = tableArray[lastYear];
+
+            var results = $("tbody");
+
+            results.find("tr").remove();
+            lastYearData.forEach(function(element, index) {
+                var newRow = '<tr><td>' + (index+1) + '</td><td>'
+                var columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];
+
+                columns.forEach(function(column, num) {
+                    newRow += element[column] + ((num==columns.length-1) ? '</td></tr>' : '</td><td>')
+                });
+
+                results.append(newRow);
+            });
+        };
+    });
+
+</script>
+
+<script>
+    $("button.btn").click( function() {
+        alert("You clicked: " + this.textContent);
+    });
+</script>
 
 {% endblock %}

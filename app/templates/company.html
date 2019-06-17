@@ -20,15 +20,7 @@
 </p>
 
 <h3> Employees: </h3>
-<ul>
-    {% for employee in employees %}
-    <li>
-        <a href="{{ url_for('.user', id=employee.id) }}">
-            {% if employee.username %} {{ employee.username }} {% else %} {{ employee.email }} {% endif %}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+{% include '_employees.html' %}
 
 <p>
     {% if current_user.can(Permission.USER_REGISTER) %}
@@ -41,15 +33,7 @@
 
 {% if company.company_name != "Inspection Company" %}
 <h3>Boilers:</h3>
-<ul>
-    {% for boiler in boilers %}
-    <li>
-        <a href="{{ url_for('boiler.show_boiler', id=boiler.id) }}">
-            {{ boiler.boiler_name }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+{% include '_boilers.html' %}
 
 
 <p>

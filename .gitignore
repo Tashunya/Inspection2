@@ -41,6 +41,7 @@ nosetests.xml
 # Virtual environment
 venv
 
-.idea
 
 config.py
+
+.idea

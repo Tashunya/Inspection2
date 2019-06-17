@@ -204,6 +204,12 @@ class Norm(db.Model): # содержит нормативные значения
     defect = db.Column(db.Float)
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
 
+    def __repr__(self):
+        return 'Default {}'.format(self.default)
+
+    def as_dict(self):
+        return {"default": self.default, "defect": self.defect}
+
 
 class Measurement(db.Model): # фактические измерения
     __tablename__ = 'measurements'

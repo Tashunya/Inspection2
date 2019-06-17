@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<ul>
+    {% for comp in company_list %}
+        {% if comp.company_name != 'Inspection Company' %}
+        <li>
+
+            <a href="{{ url_for('.company', id=comp.id) }}">
+                {{ comp.company_name }}
+            </a>
+        </li>
+        {% endif %}
+    {% endfor %}
+</ul>
