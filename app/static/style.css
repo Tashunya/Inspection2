@@ -1,0 +1,25 @@
+
+body {
+    font-family: 'Montserrat', sans-serif;
+};
+
+body div.container {
+    margin-top: 20px;
+};
+
+input .figures {
+    width: 60px;
+    text-align: center;
+};
+
+
+input .level_2_nodes {
+    width: 400px !important;
+};
+
+h3.block-name {
+    color: red !important;
+};
+
+
+
