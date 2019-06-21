@@ -1,39 +1,51 @@
-var submit = document.getElementById('submit');
-var input = document.getElementsByTagName("input");
-var jsInput = document.getElementById("final_structure");
+var input = $("td input");
+var default_json
 
 
-var submit_form = document.getElementsByTagName('form')[0];
+$('#submit').click( function() {
+    $.get("/boiler/default_structure", function(data) {
+        default_json = data;
 
-submit_form.addEventListener('submit', function (event){
-    jsInput.value = "started"
+        updateStructure(); // change structure in default_json
 
-    var jsonObject = json.parse(text_json)
+        $.ajax({ // send updated structure to Flask view add_nodes
+            async: false,
+            type: "POST",
+            contentType: "application/json",
+            url: addNodesUrl,
+            data: JSON.stringify(default_json),
+            dataType: "json",
+        });
+        window.location.href = '/boiler/1';
+        //alert("ajax done");
 
-    jsInput.value = "started 2"
+    }, "json");
 
+    return false;
+
+});
+
+
+function updateStructure(){ // change structure in default_json
     for(var i=0; i<input.length; i++) {
-        path = input[i].name.split('_');
-        current_obj = jsonObject
+        current_obj = default_json.structure
+        var path = input[i].name.split('_'); // ["1", "2", "3", "Elements"]
         path.forEach(function(elem){
-             if(elem === "Elements"){
+             if(elem === "Elements") {
                 current_obj.Elements = input[i].value
              }
              if(elem === "Points") {
                  current_obj.Points = input[i].value
              }
+
              else {
                 if (current_obj.hasOwnProperty('children') === false) {
                     current_obj = current_obj[elem-1]
                 }
                 else {
-                    current_obj = current_obj[elem-1].children
+                    current_obj = current_obj.children[elem-1]
                 }
              }
         });
     }
-    jsInput.value = json.stringify(jsonObject)
-
-    return true;
-});
-
+};

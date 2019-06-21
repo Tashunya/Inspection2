@@ -9,7 +9,7 @@
     <h1>Boiler {{ boiler.boiler_name }} </h1>
     <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
-    <a class="btn btn-danger btn-xs"
+    <a class="btn btn-danger btn-sm"
     href=" {{ url_for('boiler.edit_boiler', id=boiler.id) }}">
         Edit Boiler
     </a>
@@ -25,41 +25,6 @@
 </div>
 
 
-<script>
-    $( function() {
-        $('#block').change( function() {
-            $.get("/boiler/children/" + this.value, success, "json");
-        });
-
-        function success(childrenArray) {
-        $("select[id='level_1']").find("option").remove();
-        $("select[id='level_2']").find("option").remove()
-        var levelOneOptions = "<option selected value='__None'></option>";
-        for(var i = 0; i < childrenArray.length; i++) {
-            levelOneOptions += "<option value='" + childrenArray[i].id + "'>" + childrenArray[i].node_name + "</option>";
-        }
-        $("select[id='level_1']").append(levelOneOptions);
-        };
-     });
-</script>
-
-<script>
-    $( function() {
-        $('#level_1').change( function() {
-            $.get("/boiler/children/" + this.value, success, "json");
-        });
-
-        function success(childrenArray) {
-        $("select[id='level_2']").find("option").remove();
-        var levelOneOptions = "<option selected value='__None'></option>"
-        for(var i = 0; i < childrenArray.length; i++) {
-            levelOneOptions += "<option value='" + childrenArray[i].id + "'>" + childrenArray[i].node_name + "</option>";
-        }
-        $("select[id='level_2']").append(levelOneOptions);
-        };
-     });
-</script>
-
 <div class="col-md-12">
     <h3>Measurements</h3>
 
@@ -70,8 +35,7 @@
 
 <!--  BUTTON GROUP WITH YEARS  -->
 
-<div class="btn-group btn-group-sm" role="group" aria-label="year">
-</div>
+<div class="btn-group btn-group-sm" role="group" aria-label="year"></div>
 
 <!--  RESULTS IN TABLE  -->
 
@@ -79,11 +43,11 @@
     <thead class="thead-dark">
         <th scope="col">#</th>
         <th scope="col">Point Index</th>
-        <th scope="col">Value</th>
-        <th scope="col">Origin</th>
-        <th scope="col">Minor</th>
-        <th scope="col">Major</th>
-        <th scope="col">Defect</th>
+        <th scope="col" class="values">Value</th>
+        <th scope="col" class="values">Origin</th>
+        <th scope="col" class="values">Minor</th>
+        <th scope="col" class="values">Major</th>
+        <th scope="col" class="values">Defect</th>
     </thead>
     <tbody>
     </tbody>
@@ -95,52 +59,8 @@
 
 {% block scripts %}
 
-<script>
-    $('#chooseNode').click( function() {
-        var block = $('#block option:selected').text();
-        var level_1 = $('#level_1 option:selected').text();
-        var level_2 = $('#level_2 option:selected').text();
-        $('#elementName').html(block + '/' + level_1 + '/' + level_2)
-
-        var chosenNode = $('#level_2').val();
-
-        $.get("/boiler/table/" + chosenNode, chooseElement, "json");
-
-        function chooseElement(tableArray) {
-            var btnGroup = $(".btn-group");
-            btnGroup.find("button").remove();
-            var measuresYears = Object.keys(tableArray);
-            var lastYear = measuresYears[measuresYears.length-1];
-
-            for(var i = 0; i < measuresYears.length; i++) {
-                var button = '<button type="button" class="btn btn-outline-info">' + measuresYears[i] + '</button>'
-                btnGroup.append(button);
-            };
-
-            var lastYearData = tableArray[lastYear];
-
-            var results = $("tbody");
-
-            results.find("tr").remove();
-            lastYearData.forEach(function(element, index) {
-                var newRow = '<tr><td>' + (index+1) + '</td><td>'
-                var columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];
-
-                columns.forEach(function(column, num) {
-                    newRow += element[column] + ((num==columns.length-1) ? '</td></tr>' : '</td><td>')
-                });
-
-                results.append(newRow);
-            });
-        };
-    });
-
+<script type="text/javascript" src="{{ url_for('static', filename='show_boiler.js') }}">
 </script>
 
-<script>
-    $("button.btn").click( function() {
-        alert("You clicked: " + this.textContent);
-    });
-</script>
 
 {% endblock %}

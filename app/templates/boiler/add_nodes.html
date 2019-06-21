@@ -9,7 +9,7 @@
 </div>
 
 
-    {% for block in structure %}
+    {% for block in structure.structure %}
     <h3 class="block_name"> {{ block.node_name }} </h3>
     <table class="table">
         <thead class="thead-dark">
@@ -26,13 +26,13 @@
             <tr>
                 <th scope="row"> {{ level_1.index }} </th>
                 <td>
-                    <input name="{{ block.index }}_{{ level_1.index }}" value="{{ level_1.node_name }}" readonly>
+                    <input name="{{ block.index }}_{{ level_1.index }}" value="{{ level_1.node_name}}" readonly>
                 </td>
                 <td>
                     <table>
                         {% for level_2 in level_1.children %}
                         <tr>
-                            <td><input class="level_2_nodes" name="{{ block.index }}_{{level_1.index}}_{{ level_2.index }}"  value="{{ level_2.node_name }}"></td>
+                            <td><input class="level_2_nodes" name="{{ block.index }}_{{level_1.index}}_{{ level_2.index }}"  value="{{ level_2.node_name }}" readonly></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -67,7 +67,11 @@
     </form>
 
 
-<!--<script type="text/javascript">var text_json = `{{text_json}}` </script>-->
+
+<script>
+    var addNodesUrl = "{{ url_for("boiler.add_nodes", id=id) }}";
+</script>
+
 <script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
 
 

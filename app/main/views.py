@@ -39,7 +39,7 @@ def inspector():
 def admin():
     if current_user.role.name == "Administrator":
         company_list = Company.query.order_by(Company.company_name).all()
-        return render_template('admin.html', company_list=company_list)
+        return render_template('inspector.html', company_list=company_list)
     else:
         abort(403)
 

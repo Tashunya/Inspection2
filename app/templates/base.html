@@ -2,16 +2,14 @@
 
 {% block title %}RB Inspection{% endblock %}
 
-{% block head %}
-
+{% block styles %}
 {{ super() }}
-<link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='style.css') }}" />
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-  integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap&subset=latin-ext" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-
-{% endblock head %}
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap&subset=latin-ext" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+{% endblock styles %}
 
 
 {% block navbar %}
@@ -42,7 +40,7 @@
 {% endblock navbar%}
 
 {% block content %}
-<div class="container">
+<div id="pageContent" class="container">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
@@ -60,5 +58,4 @@
 
 {% block scripts %}
 {{ super() }}
-{{ moment.include_moment() }}
 {% endblock %}

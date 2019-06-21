@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Company Profile{% endblock %}
+{% block title %} {{ company.company_name }} {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
 <h1>{{ company.company_name }}</h1>
 </div>
+
 <p> Location: {% if company.location %} {{ company.location }}{% endif %} </p>
 <p> Info: {% if company.about %}{{company.about}}{% endif %} </p>
 
 <p>
     {% if current_user.can(Permission.COMPANY_REGISTER) %}
-    <a class="btn btn-danger btn-xs"
+    <a class="btn btn-danger btn-sm"
     href="{{ url_for('.edit_company', id=company.id) }}">
     Edit Company
     </a>
-    <a class="btn btn-danger btn-xs"> Deactivate Company</a>
+    <a class="btn btn-danger btn-sm"> Deactivate Company</a>
     {% endif %}
 </p>
 
@@ -24,7 +25,7 @@
 
 <p>
     {% if current_user.can(Permission.USER_REGISTER) %}
-    <a class="btn btn-danger btn-xs"
+    <a class="btn btn-danger btn-sm"
     href="{{ url_for('auth.register_user') }}">
     Add New User
     </a>
@@ -38,7 +39,7 @@
 
 <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
-    <a class="btn btn-danger btn-xs"
+    <a class="btn btn-danger btn-sm"
     href="{{ url_for('boiler.create_boiler') }}">
     Add New Boiler
     </a>

@@ -1,25 +1,41 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-};
+}
 
-body div.container {
-    margin-top: 20px;
-};
 
-input .figures {
+input.figures {
     width: 60px;
     text-align: center;
-};
+}
 
 
-input .level_2_nodes {
-    width: 400px !important;
-};
-
-h3.block-name {
-    color: red !important;
-};
+.level_2_nodes {
+    width: 400px;
+}
 
 
+#pageContent {
+    margin-top: 20px;
+}
 
+
+/* colors for table cells */
+
+.defect {
+    background_color: red;
+}
+
+
+.major {
+    background_color: orange;
+}
+
+
+.minor {
+    background_color: yellow;
+}
+
+.origin {
+    background_color: green;
+}

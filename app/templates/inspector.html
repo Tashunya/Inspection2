@@ -3,16 +3,30 @@
 {% block title %}RB Inspection{% endblock %}
 
 {% block page_content %}
+
 <div class="page-header">
-    <h2>
-        Inspector Page
-    </h2>
+    {% if current_user.role.name == "Administrator" %}
+    <h2>Admin Page </h2>
+    {% else %}
+    <h2>Inspector Page</h2>
+    {% endif %}
 </div>
 
 
 <h3> Companies: </h3>
 
 {% include '_companies.html' %}
+
+
+{% if current_user.role.name == "Administrator" %}
+<p>
+    <a class="btn btn-danger btn-sm"
+    href="{{ url_for('.register_company') }}">
+    Add New Company
+    </a>
+</p>
+
+{% endif %}
 
 <h3><a href="{{ url_for('.company', id=current_user.company_id) }}">Our company</a></h3>
 

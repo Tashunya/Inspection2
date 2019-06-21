@@ -1,6 +1,5 @@
 var jsonobj;
 
-
 // choose element
 
 $('#block').change( function() {
@@ -65,9 +64,9 @@ $('#chooseNode').click( function() {
 
 // when you change years
 
-$("div.btn-group button.btn").click( function() {
-    // change active button
+$("div.btn-group").on('click', 'button', function() {
 
+//    this.className += " active"
 
     var year = this.textContent;
     var data = jsonobj[year];
@@ -94,7 +93,7 @@ function createBtnGroup(tableArray) {
     var measuresYears = Object.keys(tableArray);
 
     for(var i = 0; i < measuresYears.length; i++) {
-        var button = '<button type="button" class="btn btn-outline-info" value="' + measuresYears[i] + '"></button>'
+        var button = '<button type="button" class="btn btn-outline-info" value="' + measuresYears[i] + '">' + measuresYears[i] + '</button>'
         btnGroup.append(button);
     };
 };
@@ -116,3 +115,8 @@ function createTable(data) {
     });
 };
 
+function addColor() {
+
+}
+
+// change active button

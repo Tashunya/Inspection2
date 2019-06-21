@@ -17,11 +17,10 @@ class CreateBoilerForm(FlaskForm):
 
 class CreateBoilerNodesForm(FlaskForm):
     submit = SubmitField("Add Nodes")
-    final_structure = HiddenField("final_structure", default='234')
 
 
-def node_query(boiler_id, parent_id):
-    return Node.query.filter_by(boiler_id=boiler_id).filter_by(parent_id=parent_id)
+# def node_query(boiler_id, parent_id):
+#     return Node.query.filter_by(boiler_id=boiler_id).filter_by(parent_id=parent_id)
 
 
 class NodeSelectForm(FlaskForm):
