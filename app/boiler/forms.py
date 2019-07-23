@@ -32,12 +32,3 @@ class NodeSelectForm(FlaskForm):
         super(NodeSelectForm, self).__init__(*args, **kwargs)
         self.block.query_factory = lambda: Node.query.filter_by(boiler_id=kwargs.get('boiler_id')).filter_by(parent_id=None)
 
-
-
-
-
-
-
-
-
-

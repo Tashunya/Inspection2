@@ -221,8 +221,3 @@ class Measurement(db.Model): # фактические измерения
     value = db.Column(db.Float)
 
 
-
-
-
-
-

@@ -16,8 +16,10 @@ $('#submit').click( function() {
             data: JSON.stringify(default_json),
             dataType: "json",
         });
-        window.location.href = '/boiler/1';
-        //alert("ajax done");
+
+
+
+        window.location.href = '/boiler/' + boilerId;
 
     }, "json");
 

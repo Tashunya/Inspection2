@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, abort, json, jsonify, request
 from flask_login import login_required, current_user
+from sqlalchemy.sql.expression import func
 from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm
 from .. import db
@@ -42,11 +43,11 @@ def add_nodes(id):
         updated_structure = request.get_json()['structure']
         print("updated_structure: " + str(len(updated_structure)))
         print("before add_nodes_to_db")
-        #add_nodes_to_db(updated_structure, boiler_id)
+        add_nodes_to_db(updated_structure, boiler_id)
         print("after add_nodes_to_db")
-        #flash("Nodes created")
         print("nodes created")
-        return redirect(url_for("boiler.show_boiler", id=boiler_id))
+        flash("Nodes created")
+        # return render_template("boiler/show_boiler.html", id=boiler_id)
 
     return render_template('boiler/add_nodes.html', id=id, form=form, structure=default_structure)
 
@@ -134,34 +135,42 @@ def table(node):
 
 
 def add_nodes_to_db(structure, boiler_id):
+
+    last_id = db.session.query(func.max(Node.id)).first()[0]
+
+    if last_id == None:
+        current_id = 1
+    else:
+        current_id = last_id + 1
+
     for block in structure:
         new_block = Node(boiler_id=boiler_id,
                          index=block.get('index'),
-                         node_name=block.get('node_name')
+                         node_name=block.get('node_name'),
+                         id = current_id
                          )
         db.session.add(new_block)
-        db.session.commit()
-        db.session.expire_all()
+        current_id += 1
 
         for child_1 in block.get('children'):
             new_child_1 = Node(boiler_id=boiler_id,
                                parent_id=new_block.id,
                                index=child_1.get('index'),
-                               node_name=child_1.get('node_name')
+                               node_name=child_1.get('node_name'),
+                               id = current_id
                                )
             db.session.add(new_child_1)
-            db.session.commit()
-            db.session.expire_all()
+            current_id += 1
 
             for child_2 in child_1.get('children'):
                 new_child_2 = Node(boiler_id=boiler_id,
                                    parent_id=new_child_1.id,
                                    index=child_2.get('index'),
-                                   node_name=child_2.get('node_name')
+                                   node_name=child_2.get('node_name'),
+                                   id = current_id
                                    )
                 db.session.add(new_child_2)
-                db.session.commit()
-                db.session.expire_all()
+                current_id += 1
 
                 elements = int(child_2.get("Elements"))
                 points = int(child_2.get("Points"))
@@ -171,18 +180,19 @@ def add_nodes_to_db(structure, boiler_id):
                         new_point = Node(boiler_id=boiler_id,
                                          parent_id=new_child_2.id,
                                          index=point,
-                                         node_name='Element ' + str(element) + ' Point ' + str(point)
+                                         node_name='Element ' + str(element) + ' Point ' + str(point),
+                                         id = current_id
                                          )
                         db.session.add(new_point)
-                        db.session.commit()
-                        new_point_norm = Norm(node_id=new_point.id,
+                        new_point_norm = Norm(node_id=current_id,
                                               default=6.5,
                                               minor=6.0,
                                               major=5.2,
                                               defect=4.5)
                         db.session.add(new_point_norm)
-                        db.session.commit()
-                        db.session.expire_all()
+
+                        current_id += 1
+    db.session.commit()
 
 
 
