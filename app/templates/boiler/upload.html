@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Upload Measurements{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <h1>Upload Measurement Data</h1>
+    <div class="col-md-4" >
+        {{ wtf.quick_form(form) }}
+    </div>
+</div>
+
+{% endblock %}

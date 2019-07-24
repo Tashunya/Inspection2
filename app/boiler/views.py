@@ -1,10 +1,12 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, abort, json, jsonify, request
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 from sqlalchemy.sql.expression import func
 from . import boiler
-from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm
+from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
 from .. import db
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
+import csv
 
 
 from ..decorators import permission_required
@@ -41,15 +43,64 @@ def add_nodes(id):
 
     if request.method == 'POST':
         updated_structure = request.get_json()['structure']
-        print("updated_structure: " + str(len(updated_structure)))
-        print("before add_nodes_to_db")
         add_nodes_to_db(updated_structure, boiler_id)
-        print("after add_nodes_to_db")
-        print("nodes created")
         flash("Nodes created")
         # return render_template("boiler/show_boiler.html", id=boiler_id)
 
     return render_template('boiler/add_nodes.html', id=id, form=form, structure=default_structure)
+
+
+@boiler.route("/upload", methods=["GET", "POST"])  # add measurements for chosen node
+@login_required
+@permission_required(Permission.BOILER_DATA_UPLOAD)
+def upload():
+    form = UploadForm()
+    parent_id = int(request.args["parent_id"])
+    children = get_children(parent_id)
+    boiler_id = get_boiler(parent_id)
+    inspector_id = current_user.id
+
+
+    if request.method == "POST":
+        year = form.year
+        file = request.files['upload']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(url_for('boiler.upload', id=id))
+        # check extension
+        if not allowed_file(file.filename):
+            flash("Incorrect file extension. You should upload CSV files only.")
+            return redirect(url_for('boiler.upload', id=id))
+        filename = secure_filename(file.filename)
+
+        data = file.read().decode('utf-8')
+        data = data.strip("\r\n").rsplit('\r\n')
+        data = [ float(b) for a, b in (row.rsplit(',') for row in data) ]
+
+
+        # check number of data from csv file
+        if len(data) != len(children):
+            flash("Incorrect number of measurement points in file. Please, upload another file.")
+            return redirect(url_for('boiler.upload', id=id))
+
+        # # check outliers
+        # norm = Norm.query.filter_by(node_id=children[0]['id']).first()
+        # for val in data:
+        #     if val > norm.default + 0.1: # 0.1 - допустимое превышение заводской (дефолтной) толщины стенки трубы
+        #         flash("Ubnormal data.")
+        #         return redirect(url_for('boiler.upload', id=id))
+
+        for node, val in zip(children, data):
+            new_measurement = Measurement(inspector_id=inspector_id,
+                                          node_id= node["id"],
+                                          value = val)
+            db.session.add(new_measurement)
+        db.session.commit()
+
+        flash("Data uploaded")
+        return redirect(url_for("boiler.show_boiler.html", id=boiler_id))
+
+    return render_template('boiler/upload.html', form=form)
 
 
 @boiler.route('/<int:id>')  # show boiler info
@@ -97,8 +148,7 @@ def structure():
 @boiler.route('/children/<node>', methods=["GET", "POST"])  # get json with children nodes
 @login_required
 def level(node):
-    level_elements = Node.query.filter_by(parent_id=node).all()
-    level_array = [element.as_dict() for element in level_elements]
+    level_array = get_children(node)
     return jsonify(level_array)
 
 
@@ -132,6 +182,11 @@ def table(node):
         table_dic[str(year)].append(node)
 
     return jsonify(table_dic)
+
+
+# =================================
+# AUXILIARY FUNCTIONS
+# =================================
 
 
 def add_nodes_to_db(structure, boiler_id):
@@ -193,6 +248,35 @@ def add_nodes_to_db(structure, boiler_id):
 
                         current_id += 1
     db.session.commit()
+
+
+def get_children(node):
+    level_elements = Node.query.filter_by(parent_id=node).all()
+    level_array = [element.as_dict() for element in level_elements]
+    return level_array
+
+
+def get_parent(node):
+    node = Node.query.filter_by(id=node).first()
+    parent_id = node.parent_id
+    return parent_id
+
+
+def get_boiler(node):
+    node = Node.query.filter_by(id=node).first()
+    boiler_id = node.boiler_id
+    return boiler_id
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() == 'csv'
+
+
+
+
+
+
 
 
 

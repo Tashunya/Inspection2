@@ -170,7 +170,7 @@ class Boiler(db.Model):
     boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
     nodes = db.relationship('Node', backref='boiler', lazy='dynamic')
-    measurements = db.relationship('Measurement', backref='boiler', lazy='dynamic')
+    # measurements = db.relationship('Measurement', backref='boiler', lazy='dynamic')
 
     def __repr__(self):
         return '<Boiler %r>' % self.boiler_name
@@ -214,7 +214,7 @@ class Norm(db.Model): # содержит нормативные значения
 class Measurement(db.Model): # фактические измерения
     __tablename__ = 'measurements'
     id = db.Column(db.Integer, primary_key=True)
-    boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
+    # boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
     inspector_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
     measure_date = db.Column(db.DateTime, default=datetime.utcnow)

@@ -20,6 +20,22 @@ input.figures {
 }
 
 
+
+.fa-file-download {
+    padding: 0 3px 0 3px;
+    color: #17a2b8;
+    font-size: 1.5em;
+}
+
+
+.fa-file-upload {
+    padding: 0 3px 0 3px;
+    color: #28a745;
+    font-size: 1.5em;
+}
+
+
+
 /* colors for table cells */
 
 .defect {

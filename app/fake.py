@@ -1,6 +1,8 @@
 from random import uniform
+import csv
 from . import db
 from .models import Node, Measurement
+
 
 
 parent_nodes = Node.query.filter_by(boiler_id=1).with_entities(Node.parent_id).distinct().all()
@@ -17,10 +19,21 @@ def add_measurements(node_list):
             measurement = Measurement(boiler_id=node.boiler_id,
                                       node_id=node.id,
                                       measure_date=year,
-                                      value=uniform(6.5, 4.5))
+                                      value=uniform(4.5, 6.5))
             db.session.add(measurement)
 
     db.session.commit()
+
+
+def fake_csv(num):
+    name = f'fake_{str(num)}.csv'
+    with open(name, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        for i in range(1, num+1):
+            writer.writerow([i, round(uniform(4.5, 6.5), 2)])
+    csvfile.close()
+
+
 
 
 

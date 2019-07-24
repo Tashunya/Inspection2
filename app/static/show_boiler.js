@@ -39,7 +39,11 @@ function addOptions(childrenArray) {
 $('#chooseNode').click( function() {
 
     var chosenNode = $('#level_2').val();
+    var link = "/boiler/upload?parent_id=" + chosenNode
+    $("a#upload").attr("href", link)
+
     $.get("/boiler/table/" + chosenNode, chooseElement, "json");
+
 
 
     function chooseElement(tableArray) {
