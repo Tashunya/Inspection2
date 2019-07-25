@@ -1,7 +1,9 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, abort, json, jsonify, request
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
+from sqlalchemy import extract
 from sqlalchemy.sql.expression import func
+from datetime import datetime
 from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
 from .. import db
@@ -60,45 +62,53 @@ def upload():
     boiler_id = get_boiler(parent_id)
     inspector_id = current_user.id
 
-
     if request.method == "POST":
-        year = form.year
+        date = form.year
+        year = date.data.year
+
         file = request.files['upload']
         if file.filename == '':
             flash('No selected file')
-            return redirect(url_for('boiler.upload', id=id))
+            return redirect(url_for('boiler.upload', parent_id=parent_id))
         # check extension
         if not allowed_file(file.filename):
             flash("Incorrect file extension. You should upload CSV files only.")
-            return redirect(url_for('boiler.upload', id=id))
+            return redirect(url_for('boiler.upload', parent_id=parent_id))
         filename = secure_filename(file.filename)
 
         data = file.read().decode('utf-8')
         data = data.strip("\r\n").rsplit('\r\n')
         data = [ float(b) for a, b in (row.rsplit(',') for row in data) ]
 
-
         # check number of data from csv file
         if len(data) != len(children):
             flash("Incorrect number of measurement points in file. Please, upload another file.")
-            return redirect(url_for('boiler.upload', id=id))
+            return redirect(url_for('boiler.upload', parent_id=parent_id))
 
-        # # check outliers
-        # norm = Norm.query.filter_by(node_id=children[0]['id']).first()
-        # for val in data:
-        #     if val > norm.default + 0.1: # 0.1 - допустимое превышение заводской (дефолтной) толщины стенки трубы
-        #         flash("Ubnormal data.")
-        #         return redirect(url_for('boiler.upload', id=id))
+        # check outliers
+        norm = Norm.query.filter_by(node_id=children[0]['id']).first()
+        for val in data:
+            if val > norm.default + 0.1: # 0.1 - допустимое превышение заводской (дефолтной) толщины стенки трубы
+                flash("Ubnormal data.")
+                return redirect(url_for('boiler.upload', parent_id=parent_id))
 
+        # # delete old values if any
+        for node in children:
+            Measurement.query.filter_by(node_id=node["id"]).\
+                filter(extract("year", Measurement.measure_date) == year).\
+                delete(synchronize_session=False)
+
+        # save new values
         for node, val in zip(children, data):
             new_measurement = Measurement(inspector_id=inspector_id,
-                                          node_id= node["id"],
-                                          value = val)
+                                          node_id=node["id"],
+                                          value=val,
+                                          measure_date=date.data)
             db.session.add(new_measurement)
         db.session.commit()
 
         flash("Data uploaded")
-        return redirect(url_for("boiler.show_boiler.html", id=boiler_id))
+        return redirect(url_for("boiler.show_boiler", id=boiler_id))
 
     return render_template('boiler/upload.html', form=form)
 
