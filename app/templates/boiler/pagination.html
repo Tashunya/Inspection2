@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "boiler/_macros.html" as macros %}
+
+{% block title %}Pagination{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h2>Boiler {{boiler}}</h2>
+    <h2>{{element}}</h2>
+</div>
+
+<div class="col-md-12">
+
+<!--  RESULTS IN TABLE  -->
+    <div class="'table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <th scope="col">#</th>
+                <th scope="col">Point Index</th>
+                <th scope="col" class="values">Value</th>
+                <th scope="col" class="values">Origin</th>
+                <th scope="col" class="values">Minor</th>
+                <th scope="col" class="values">Major</th>
+                <th scope="col" class="values">Defect</th>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.index }}</td>
+                    <td>{{ row.node_name }}</td>
+                    <td>{{ row.value }}</td>
+                    <td>{{ row.default }}</td>
+                    <td>{{ row.minor }}</td>
+                    <td>{{ row.major }}</td>
+                    <td>{{ row.defect }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+    {% if pagination %}
+    <div class="pagination">
+    {{ macros.pagination_widget(pagination, '.pagination', node_id) }}
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

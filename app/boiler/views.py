@@ -89,7 +89,7 @@ def upload():
         norm = Norm.query.filter_by(node_id=children[0]['id']).first()
         for val in data:
             if val > norm.default + 0.1: # 0.1 - допустимое превышение заводской (дефолтной) толщины стенки трубы
-                flash("Ubnormal data.")
+                flash("Abnormal data.")
                 return redirect(url_for('boiler.upload', parent_id=parent_id))
 
         # # delete old values if any
@@ -193,6 +193,28 @@ def table(node):
 
     return jsonify(table_dic)
 
+
+# try pagination
+@boiler.route('/pagination/<int:node_id>', methods=["GET"])
+@login_required
+@permission_required(Permission.CREATE_BOILER)
+def pagination(node_id):
+    boiler = db.session.query(Boiler.boiler_name).join(Node, Boiler.id == Node.boiler_id).filter(Node.id==node_id).first()[0]
+    element = Node.query.filter_by(id=node_id).first().node_name
+    page = request.args.get('page', 1, type=int)
+
+    table_query = db.session.query(Node.node_name, Node.index, Measurement.measure_date, Measurement.value, Norm.default,
+                                   Norm.minor,
+                                   Norm.major, Norm.defect). \
+        outerjoin(Norm, Norm.node_id == Node.id). \
+        outerjoin(Measurement, Measurement.node_id == Node.id). \
+        filter(Node.parent_id == node_id). \
+        filter(Measurement.value != None)
+
+    pagination = table_query.paginate(page, per_page=10, error_out=False)
+    rows = pagination.items
+
+    return render_template('boiler/pagination.html', rows=rows, pagination=pagination, node_id=node_id, boiler=boiler, element=element)
 
 # =================================
 # AUXILIARY FUNCTIONS
