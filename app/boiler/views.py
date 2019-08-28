@@ -113,6 +113,16 @@ def upload():
     return render_template('boiler/upload.html', form=form)
 
 
+@boiler.route("/analytics")
+@login_required
+@permission_required(Permission.BOILER_DATA_UPLOAD)
+def analytics():
+    parent_id = int(request.args["parent_id"])
+    children = get_children(parent_id)
+    boiler_id = get_boiler(parent_id)
+    return render_template('boiler/analytics.html')
+
+
 @boiler.route('/<int:id>')  # show boiler info
 @login_required
 def show_boiler(id):

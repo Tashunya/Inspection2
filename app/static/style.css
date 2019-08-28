@@ -52,6 +52,13 @@ input.figures {
     background_color: yellow;
 }
 
+
 .origin {
     background_color: green;
+}
+
+
+.btn-danger.btn-sm {
+    line-height: 1.1;
+    font-size: .8rem;
 }

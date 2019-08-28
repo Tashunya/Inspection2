@@ -15,12 +15,12 @@ from ..decorators import permission_required
 @main.route('/')
 @login_required
 def index():
-    company = Company.query.filter_by(id=current_user.company_id).first()
-    boilers = Boiler.query.filter_by(company_id=current_user.company_id).all()
     if current_user.role.name == "Inspector":
         return redirect(url_for('.inspector'))
     if current_user.role.name == "Administrator":
         return redirect(url_for('.admin'))
+    company = Company.query.filter_by(id=current_user.company_id).first()
+    boilers = Boiler.query.filter_by(company_id=current_user.company_id).all()
     return render_template('index.html', company=company, boilers=boilers)
 
 

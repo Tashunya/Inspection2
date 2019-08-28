@@ -1,5 +1,5 @@
 var input = $("td input");
-var default_json
+var default_json;
 
 
 $('#submit').click( function() {
@@ -14,7 +14,7 @@ $('#submit').click( function() {
             contentType: "application/json",
             url: addNodesUrl,
             data: JSON.stringify(default_json),
-            dataType: "json",
+            dataType: "json"
         });
 
 
@@ -30,7 +30,7 @@ $('#submit').click( function() {
 
 function updateStructure(){ // change structure in default_json
     for(var i=0; i<input.length; i++) {
-        current_obj = default_json.structure
+        current_obj = default_json.structure;
         var path = input[i].name.split('_'); // ["1", "2", "3", "Elements"]
         path.forEach(function(elem){
              if(elem === "Elements") {
@@ -50,4 +50,4 @@ function updateStructure(){ // change structure in default_json
              }
         });
     }
-};
+}

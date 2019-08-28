@@ -9,9 +9,9 @@ $('#block').change( function() {
 function levelOneChoice(childrenArray) {
     $("select[id='level_1']").find("option").remove();
     $("select[id='level_2']").find("option").remove();
-    options = addOptions(childrenArray)
+    options = addOptions(childrenArray);
     $("select[id='level_1']").append(options);
-};
+}
 
 
 $('#level_1').change( function() {
@@ -20,18 +20,16 @@ $('#level_1').change( function() {
 
 function levelTwoChoice(childrenArray) {
     $("select[id='level_2']").find("option").remove();
-    options = addOptions(childrenArray)
+    options = addOptions(childrenArray);
     $("select[id='level_2']").append(options);
-};
-
-
+}
 function addOptions(childrenArray) {
-    var options = "<option selected value='__None'></option>"
+    var options = "<option selected value='__None'></option>";
     for(var i = 0; i < childrenArray.length; i++) {
         options += "<option value='" + childrenArray[i].id + "'>" + childrenArray[i].node_name + "</option>";
-    };
+    }
     return options
-};
+}
 
 
 // when element is chosen
@@ -39,8 +37,8 @@ function addOptions(childrenArray) {
 $('#chooseNode').click( function() {
 
     var chosenNode = $('#level_2').val();
-    var link = "/boiler/upload?parent_id=" + chosenNode
-    $("a#upload").attr("href", link)
+    var link = "/boiler/upload?parent_id=" + chosenNode;
+    $("a#upload").attr("href", link);
 
     $.get("/boiler/table/" + chosenNode, chooseElement, "json");
 
@@ -50,19 +48,19 @@ $('#chooseNode').click( function() {
          jsonobj = tableArray;
 
          // change title with element name
-         changeElementName()
+         changeElementName();
 
         // create button group with years
-        createBtnGroup(tableArray)
+        createBtnGroup(tableArray);
 
         // find last year
-        var measuresYears = Object.keys(tableArray)
+        var measuresYears = Object.keys(tableArray);
         var lastYear = measuresYears[measuresYears.length-1];
         var lastYearData = tableArray[lastYear];
 
         // show table with data for last year
         createTable(lastYearData)
-    };
+    }
 });
 
 
@@ -85,8 +83,12 @@ function changeElementName() {
     var level_1 = $('#level_1 option:selected').text();
     var level_2 = $('#level_2 option:selected').text();
 
-    $('#elementName').html(block + '/' + level_1 + '/' + level_2)
-};
+    var chosenNode = $('#level_2').val();
+    var link = "/boiler/analytics?parent_id=" + chosenNode;
+    var analyticsBtn = ' <a class="btn btn-warning btn-sm" href="' + link + '"> Analytics</a>';
+    $('#elementName').html(block + '/' + level_1 + '/' + level_2 + analyticsBtn)
+
+}
 
 
 // create button group with years
@@ -97,10 +99,10 @@ function createBtnGroup(tableArray) {
     var measuresYears = Object.keys(tableArray);
 
     for(var i = 0; i < measuresYears.length; i++) {
-        var button = '<button type="button" class="btn btn-outline-info" value="' + measuresYears[i] + '">' + measuresYears[i] + '</button>'
+        var button = '<button type="button" class="btn btn-outline-info" value="' + measuresYears[i] + '">' + measuresYears[i] + '</button>';
         btnGroup.append(button);
-    };
-};
+    }
+}
 
 // show table with data
 function createTable(data) {
@@ -108,7 +110,7 @@ function createTable(data) {
     results.find("tr").remove();
 
     data.forEach(function(element, index) {
-        var newRow = '<tr><td>' + (index+1) + '</td><td>'
+        var newRow = '<tr><td>' + (index+1) + '</td><td>';
         var columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];
 
         columns.forEach(function(column, num) {
@@ -117,7 +119,7 @@ function createTable(data) {
 
         results.append(newRow);
     });
-};
+}
 
 function addColor() {
 
