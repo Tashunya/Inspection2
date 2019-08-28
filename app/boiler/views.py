@@ -1,14 +1,17 @@
-from flask import render_template, session, redirect, url_for, current_app, flash, abort, json, jsonify, request
+"""
+This module is used to manage boiler routes.
+"""
+
+from flask import render_template, redirect, url_for, flash, abort, json, jsonify, request
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from sqlalchemy import extract
 from sqlalchemy.sql.expression import func
-from datetime import datetime
+# from datetime import datetime
 from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
 from .. import db
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
-import csv
+# import csv
 
 
 from ..decorators import permission_required
@@ -18,14 +21,18 @@ from ..decorators import permission_required
 # =====================================================
 
 
-@boiler.route('/create', methods=["GET", "POST"])  # create boiler
+@boiler.route('/create', methods=["GET", "POST"])
 @login_required
 @permission_required(Permission.CREATE_BOILER)
 def create_boiler():
+    """
+    Manages route for the page where new boiler is created.
+    :return:
+    """
     form = CreateBoilerForm()
     if form.validate_on_submit():
         new_boiler = Boiler(boiler_name=form.boiler_name.data,
-                        company_id=int(form.company.data))
+                            company_id=int(form.company.data))
         db.session.add(new_boiler)
         db.session.commit()
         flash("New boiler created")
@@ -33,13 +40,17 @@ def create_boiler():
     return render_template("boiler/create_boiler.html", form=form)
 
 
-@boiler.route('<int:id>/add-nodes', methods=["GET", "POST"])  # add boiler structure and norms
+@boiler.route('<int:boiler_id>/add-nodes', methods=["GET", "POST"])
 @login_required
 @permission_required(Permission.CREATE_BOILER)
-def add_nodes(id):
-    boiler_id = id
-    with open('app/static/default_nodes.json', 'r') as f:
-        default_structure = json.load(f)
+def add_nodes(boiler_id):
+    """
+    Manages route for the page where boiler nodes are created.
+    :param boiler_id:
+    :return:
+    """
+    with open('app/static/default_nodes.json', 'r') as structure_file:
+        default_structure = json.load(structure_file)
 
     form = CreateBoilerNodesForm()
 
@@ -49,13 +60,18 @@ def add_nodes(id):
         flash("Nodes created")
         # return render_template("boiler/show_boiler.html", id=boiler_id)
 
-    return render_template('boiler/add_nodes.html', id=id, form=form, structure=default_structure)
+    return render_template('boiler/add_nodes.html', id=boiler_id,
+                           form=form, structure=default_structure)
 
 
-@boiler.route("/upload", methods=["GET", "POST"])  # add measurements for chosen node
+@boiler.route("/upload", methods=["GET", "POST"])
 @login_required
 @permission_required(Permission.BOILER_DATA_UPLOAD)
 def upload():
+    """
+     Manages route for the page where measurement info for chosen node is uploaded to db.
+    :return:
+    """
     form = UploadForm()
     parent_id = int(request.args["parent_id"])
     children = get_children(parent_id)
@@ -74,11 +90,11 @@ def upload():
         if not allowed_file(file.filename):
             flash("Incorrect file extension. You should upload CSV files only.")
             return redirect(url_for('boiler.upload', parent_id=parent_id))
-        filename = secure_filename(file.filename)
+        #filename = secure_filename(file.filename)
 
         data = file.read().decode('utf-8')
         data = data.strip("\r\n").rsplit('\r\n')
-        data = [ float(b) for a, b in (row.rsplit(',') for row in data) ]
+        data = [float(b) for a, b in (row.rsplit(',') for row in data)]
 
         # check number of data from csv file
         if len(data) != len(children):
@@ -88,7 +104,7 @@ def upload():
         # check outliers
         norm = Norm.query.filter_by(node_id=children[0]['id']).first()
         for val in data:
-            if val > norm.default + 0.1: # 0.1 - допустимое превышение заводской (дефолтной) толщины стенки трубы
+            if val > norm.default + 0.1:  # 0.1 - допустимое превышение заводской толщины
                 flash("Abnormal data.")
                 return redirect(url_for('boiler.upload', parent_id=parent_id))
 
@@ -123,33 +139,44 @@ def analytics():
     return render_template('boiler/analytics.html')
 
 
-@boiler.route('/<int:id>')  # show boiler info
+@boiler.route('/<int:boiler_id>')
 @login_required
-def show_boiler(id):
-    boiler = Boiler.query.filter_by(id=id).first_or_404()
-    if not current_user.company_access(boiler.company_id):
+def show_boiler(boiler_id):
+    """
+     Manages route for the page where boiler info is shown.
+    :param boiler_id:
+    :return:
+    """
+    requested_boiler = Boiler.query.filter_by(id=boiler_id).first_or_404()
+    if not current_user.company_access(requested_boiler.company_id):
         abort(403)
-    company = Company.query.filter_by(id=boiler.company_id).first()
-    form = NodeSelectForm(boiler_id=boiler.id)
-    return render_template('boiler/show_boiler.html', boiler=boiler, company=company, form=form)
+    company = Company.query.filter_by(id=requested_boiler.company_id).first()
+    form = NodeSelectForm(boiler_id=requested_boiler.id)
+    return render_template('boiler/show_boiler.html', boiler=requested_boiler,
+                           company=company, form=form)
 
 
-@boiler.route('/edit-boiler/<id>', methods=["GET", "POST"])  # edit boiler info
+@boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])
 @login_required
 @permission_required(Permission.CREATE_BOILER)
-def edit_boiler(id):
-    boiler = Boiler.query.get_or_404(id)
-    form = CreateBoilerForm(boiler=boiler)
+def edit_boiler(boiler_id):
+    """
+     Manages route for the page where boiler info is edited.
+    :param boiler_id:
+    :return:
+    """
+    requested_boiler = Boiler.query.get_or_404(boiler_id)
+    form = CreateBoilerForm(boiler=requested_boiler)
     if form.validate_on_submit():
-        boiler.boiler_name = form.boiler_name.data
-        boiler.company = Company.query.get(form.company.data)
-        db.session.add(boiler)
+        requested_boiler.boiler_name = form.boiler_name.data
+        requested_boiler.company = Company.query.get(form.company.data)
+        db.session.add(requested_boiler)
         db.session.commit()
         flash("The boiler has been updated.")
-        return redirect(url_for('boiler.show_boiler', id=id))
-    form.boiler_name.data = boiler.boiler_name
-    form.company.data = boiler.company
-    return render_template('boiler/edit_boiler.html', boiler=boiler, form=form)
+        return redirect(url_for('boiler.show_boiler', id=boiler_id))
+    form.boiler_name.data = requested_boiler.boiler_name
+    form.company.data = requested_boiler.company
+    return render_template('boiler/edit_boiler.html', boiler=requested_boiler, form=form)
 
 
 # =============================
@@ -160,14 +187,23 @@ def edit_boiler(id):
 @boiler.route('/default_structure', methods=["GET"])
 @login_required
 def structure():
-    with open('app/static/default_nodes.json', 'r') as f:
-        structure = json.load(f)
-    return jsonify(structure)
+    """
+
+    :return:
+    """
+    with open('app/static/default_nodes.json', 'r') as file_obj:
+        default_boiler_structure = json.load(file_obj)
+    return jsonify(default_boiler_structure)
 
 
 @boiler.route('/children/<node>', methods=["GET", "POST"])  # get json with children nodes
 @login_required
 def level(node):
+    """
+
+    :param node:
+    :return:
+    """
     level_array = get_children(node)
     return jsonify(level_array)
 
@@ -176,7 +212,8 @@ def level(node):
 @login_required
 def table(node):
 
-    ''' SELECT nodes.id, nodes.node_name, measurements.measure_date, COALESCE(measurements.value, 0),
+    """
+    SELECT nodes.id, nodes.node_name, measurements.measure_date, COALESCE(measurements.value, 0),
     norms."default", norms.minor, norms.major, norms.defect
     FROM public.nodes as nodes
     LEFT JOIN public.norms as norms
@@ -184,10 +221,11 @@ def table(node):
     LEFT JOIN public.measurements as measurements
     ON nodes.id = measurements.node_id
     WHERE parent_id = 3
-    ORDER BY nodes.id; '''
+    ORDER BY nodes.id;
+    """
 
-    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value, Norm.default, Norm.minor,
-                         Norm.major, Norm.defect). \
+    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
+                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
         outerjoin(Norm, Norm.node_id == Node.id). \
         outerjoin(Measurement, Measurement.node_id == Node.id). \
         filter(Node.parent_id == node). \
@@ -195,11 +233,11 @@ def table(node):
 
     table_dic = {}
 
-    for node in table_query:
-        year = node[1].year
-        if not str(year) in table_dic:
+    for current_node in table_query:
+        year = current_node[1].year
+        if str(year) not in table_dic:
             table_dic[str(year)] = []
-        table_dic[str(year)].append(node)
+        table_dic[str(year)].append(current_node)
 
     return jsonify(table_dic)
 
@@ -209,29 +247,42 @@ def table(node):
 @login_required
 @permission_required(Permission.CREATE_BOILER)
 def pagination(node_id):
-    boiler = db.session.query(Boiler.boiler_name).join(Node, Boiler.id == Node.boiler_id).filter(Node.id==node_id).first()[0]
+    """
+
+    :param node_id:
+    :return:
+    """
+    boiler = db.session.query(Boiler.boiler_name).join(Node, Boiler.id == Node.boiler_id). \
+        filter(Node.id == node_id).first()[0]
     element = Node.query.filter_by(id=node_id).first().node_name
     page = request.args.get('page', 1, type=int)
 
-    table_query = db.session.query(Node.node_name, Node.index, Measurement.measure_date, Measurement.value, Norm.default,
-                                   Norm.minor,
-                                   Norm.major, Norm.defect). \
+    table_query = db.session.query(Node.node_name, Node.index, Measurement.measure_date,
+                                   Measurement.value, Norm.default,
+                                   Norm.minor, Norm.major, Norm.defect). \
         outerjoin(Norm, Norm.node_id == Node.id). \
         outerjoin(Measurement, Measurement.node_id == Node.id). \
         filter(Node.parent_id == node_id). \
         filter(Measurement.value != None)
 
-    pagination = table_query.paginate(page, per_page=10, error_out=False)
+    pagination_list = table_query.paginate(page, per_page=10, error_out=False)
     rows = pagination.items
 
-    return render_template('boiler/pagination.html', rows=rows, pagination=pagination, node_id=node_id, boiler=boiler, element=element)
+    return render_template('boiler/pagination.html', rows=rows, pagination=pagination_list,
+                           node_id=node_id, boiler=boiler, element=element)
 
 # =================================
 # AUXILIARY FUNCTIONS
 # =================================
 
 
-def add_nodes_to_db(structure, boiler_id):
+def add_nodes_to_db(boiler_structure, boiler_id):
+    """
+
+    :param boiler_structure:
+    :param boiler_id:
+    :return:
+    """
 
     last_id = db.session.query(func.max(Node.id)).first()[0]
 
@@ -240,11 +291,11 @@ def add_nodes_to_db(structure, boiler_id):
     else:
         current_id = last_id + 1
 
-    for block in structure:
+    for block in boiler_structure:
         new_block = Node(boiler_id=boiler_id,
                          index=block.get('index'),
                          node_name=block.get('node_name'),
-                         id = current_id
+                         id=current_id
                          )
         db.session.add(new_block)
         current_id += 1
@@ -254,7 +305,7 @@ def add_nodes_to_db(structure, boiler_id):
                                parent_id=new_block.id,
                                index=child_1.get('index'),
                                node_name=child_1.get('node_name'),
-                               id = current_id
+                               id=current_id
                                )
             db.session.add(new_child_1)
             current_id += 1
@@ -264,21 +315,22 @@ def add_nodes_to_db(structure, boiler_id):
                                    parent_id=new_child_1.id,
                                    index=child_2.get('index'),
                                    node_name=child_2.get('node_name'),
-                                   id = current_id
+                                   id=current_id
                                    )
                 db.session.add(new_child_2)
                 current_id += 1
 
-                elements = int(child_2.get("Elements"))
-                points = int(child_2.get("Points"))
+                # elements = int(child_2.get("Elements"))
+                # points = int(child_2.get("Points"))
 
-                for element in range(1, elements + 1):
-                    for point in range(1, points + 1):
+                for element in range(1, int(child_2.get("Elements")) + 1):
+                    for point in range(1, int(child_2.get("Points")) + 1):
                         new_point = Node(boiler_id=boiler_id,
                                          parent_id=new_child_2.id,
                                          index=point,
-                                         node_name='Element ' + str(element) + ' Point ' + str(point),
-                                         id = current_id
+                                         node_name='Element ' + str(element)
+                                         + ' Point ' + str(point),
+                                         id=current_id
                                          )
                         db.session.add(new_point)
                         new_point_norm = Norm(node_id=current_id,
@@ -293,40 +345,43 @@ def add_nodes_to_db(structure, boiler_id):
 
 
 def get_children(node):
+    """
+
+    :param node:
+    :return:
+    """
     level_elements = Node.query.filter_by(parent_id=node).all()
     level_array = [element.as_dict() for element in level_elements]
     return level_array
 
 
 def get_parent(node):
+    """
+
+    :param node:
+    :return:
+    """
     node = Node.query.filter_by(id=node).first()
     parent_id = node.parent_id
     return parent_id
 
 
 def get_boiler(node):
+    """
+
+    :param node:
+    :return:
+    """
     node = Node.query.filter_by(id=node).first()
     boiler_id = node.boiler_id
     return boiler_id
 
 
 def allowed_file(filename):
+    """
+
+    :param filename:
+    :return:
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() == 'csv'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
