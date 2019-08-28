@@ -2,15 +2,18 @@ var jsonobj;
 
 // choose element
 
+lvlOne = $("select[id='level_1']");
+lvlTwo = $("select[id='level_2']");
+
 $('#block').change( function() {
     $.get("/boiler/children/" + this.value, levelOneChoice, "json");
 });
 
 function levelOneChoice(childrenArray) {
-    $("select[id='level_1']").find("option").remove();
-    $("select[id='level_2']").find("option").remove();
+    lvlOne.find("option").remove();
+    lvlTwo.find("option").remove();
     options = addOptions(childrenArray);
-    $("select[id='level_1']").append(options);
+    lvlOne.append(options);
 }
 
 
@@ -19,9 +22,9 @@ $('#level_1').change( function() {
 });
 
 function levelTwoChoice(childrenArray) {
-    $("select[id='level_2']").find("option").remove();
+    lvlTwo.find("option").remove();
     options = addOptions(childrenArray);
-    $("select[id='level_2']").append(options);
+    lvlTwo.append(options);
 }
 function addOptions(childrenArray) {
     var options = "<option selected value='__None'></option>";

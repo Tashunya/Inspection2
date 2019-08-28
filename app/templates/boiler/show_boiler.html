@@ -10,7 +10,7 @@
     <p>
     {% if current_user.can(Permission.CREATE_BOILER) %}
     <a class="btn btn-danger btn-sm"
-    href=" {{ url_for('boiler.edit_boiler', id=boiler.id) }}">
+    href=" {{ url_for('boiler.edit_boiler', boiler_id=boiler.id) }}">
         Edit Boiler
     </a>
     {% endif %}

@@ -3,23 +3,18 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-
 input.figures {
     width: 60px;
     text-align: center;
 }
 
-
 .level_2_nodes {
     width: 400px;
 }
 
-
 #pageContent {
     margin-top: 20px;
 }
-
-
 
 .fa-file-download {
     padding: 0 3px 0 3px;
@@ -27,13 +22,11 @@ input.figures {
     font-size: 1.5em;
 }
 
-
 .fa-file-upload {
     padding: 0 3px 0 3px;
     color: #28a745;
     font-size: 1.5em;
 }
-
 
 
 /* colors for table cells */

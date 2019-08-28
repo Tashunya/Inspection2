@@ -36,7 +36,7 @@ def create_boiler():
         db.session.add(new_boiler)
         db.session.commit()
         flash("New boiler created")
-        return redirect(url_for("boiler.add_nodes", id=new_boiler.id))
+        return redirect(url_for("boiler.add_nodes", boiler_id=new_boiler.id))
     return render_template("boiler/create_boiler.html", form=form)
 
 
@@ -62,6 +62,23 @@ def add_nodes(boiler_id):
 
     return render_template('boiler/add_nodes.html', id=boiler_id,
                            form=form, structure=default_structure)
+
+
+@boiler.route('/<int:boiler_id>')
+@login_required
+def show_boiler(boiler_id):
+    """
+     Manages route for the page where boiler info is shown.
+    :param boiler_id:
+    :return:
+    """
+    requested_boiler = Boiler.query.filter_by(id=boiler_id).first_or_404()
+    if not current_user.company_access(requested_boiler.company_id):
+        abort(403)
+    company = Company.query.filter_by(id=requested_boiler.company_id).first()
+    form = NodeSelectForm(boiler_id=requested_boiler.id)
+    return render_template('boiler/show_boiler.html', boiler=requested_boiler,
+                           company=company, form=form)
 
 
 @boiler.route("/upload", methods=["GET", "POST"])
@@ -124,36 +141,22 @@ def upload():
         db.session.commit()
 
         flash("Data uploaded")
-        return redirect(url_for("boiler.show_boiler", id=boiler_id))
+        return redirect(url_for("boiler.show_boiler", boiler_id=boiler_id))
 
     return render_template('boiler/upload.html', form=form)
 
 
 @boiler.route("/analytics")
 @login_required
-@permission_required(Permission.BOILER_DATA_UPLOAD)
 def analytics():
+    """
+    Manages route for the analytics page.
+    :return:
+    """
     parent_id = int(request.args["parent_id"])
     children = get_children(parent_id)
     boiler_id = get_boiler(parent_id)
     return render_template('boiler/analytics.html')
-
-
-@boiler.route('/<int:boiler_id>')
-@login_required
-def show_boiler(boiler_id):
-    """
-     Manages route for the page where boiler info is shown.
-    :param boiler_id:
-    :return:
-    """
-    requested_boiler = Boiler.query.filter_by(id=boiler_id).first_or_404()
-    if not current_user.company_access(requested_boiler.company_id):
-        abort(403)
-    company = Company.query.filter_by(id=requested_boiler.company_id).first()
-    form = NodeSelectForm(boiler_id=requested_boiler.id)
-    return render_template('boiler/show_boiler.html', boiler=requested_boiler,
-                           company=company, form=form)
 
 
 @boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])
@@ -188,21 +191,21 @@ def edit_boiler(boiler_id):
 @login_required
 def structure():
     """
-
-    :return:
+    Provides default boiler structure as json
+    :return: json
     """
     with open('app/static/default_nodes.json', 'r') as file_obj:
         default_boiler_structure = json.load(file_obj)
     return jsonify(default_boiler_structure)
 
 
-@boiler.route('/children/<node>', methods=["GET", "POST"])  # get json with children nodes
+@boiler.route('/children/<node>', methods=["GET", "POST"])
 @login_required
 def level(node):
     """
-
+    Provides children nodes of the give node as json
     :param node:
-    :return:
+    :return: json
     """
     level_array = get_children(node)
     return jsonify(level_array)
@@ -211,6 +214,17 @@ def level(node):
 @boiler.route('/table/<node>', methods=["GET", "POST"])  # get json with measurements of chosen node
 @login_required
 def table(node):
+    """
+    Provides measurements records info for chosen node for all years + norms info as json
+    :param node:
+    :return: json
+    """
+    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
+                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
+        outerjoin(Norm, Norm.node_id == Node.id). \
+        outerjoin(Measurement, Measurement.node_id == Node.id). \
+        filter(Node.parent_id == node). \
+        filter(Measurement.value != None).all()
 
     """
     SELECT nodes.id, nodes.node_name, measurements.measure_date, COALESCE(measurements.value, 0),
@@ -223,13 +237,6 @@ def table(node):
     WHERE parent_id = 3
     ORDER BY nodes.id;
     """
-
-    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
-                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
-        outerjoin(Norm, Norm.node_id == Node.id). \
-        outerjoin(Measurement, Measurement.node_id == Node.id). \
-        filter(Node.parent_id == node). \
-        filter(Measurement.value != None).all()
 
     table_dic = {}
 
@@ -248,7 +255,7 @@ def table(node):
 @permission_required(Permission.CREATE_BOILER)
 def pagination(node_id):
     """
-
+    Manages route for the page with boiler node info using pagination
     :param node_id:
     :return:
     """
@@ -266,7 +273,7 @@ def pagination(node_id):
         filter(Measurement.value != None)
 
     pagination_list = table_query.paginate(page, per_page=10, error_out=False)
-    rows = pagination.items
+    rows = pagination_list.items
 
     return render_template('boiler/pagination.html', rows=rows, pagination=pagination_list,
                            node_id=node_id, boiler=boiler, element=element)
@@ -278,7 +285,7 @@ def pagination(node_id):
 
 def add_nodes_to_db(boiler_structure, boiler_id):
     """
-
+    Adds newly created boiler structure to db.
     :param boiler_structure:
     :param boiler_id:
     :return:
@@ -346,7 +353,7 @@ def add_nodes_to_db(boiler_structure, boiler_id):
 
 def get_children(node):
     """
-
+    Returns given node's children as dict
     :param node:
     :return:
     """
@@ -357,7 +364,7 @@ def get_children(node):
 
 def get_parent(node):
     """
-
+    Returns given node's parent id
     :param node:
     :return:
     """
@@ -368,7 +375,7 @@ def get_parent(node):
 
 def get_boiler(node):
     """
-
+    Returns given node's boiler id
     :param node:
     :return:
     """
@@ -379,7 +386,7 @@ def get_boiler(node):
 
 def allowed_file(filename):
     """
-
+    Checks if uploaded file extension is csv
     :param filename:
     :return:
     """
