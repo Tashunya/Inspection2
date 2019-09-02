@@ -11,6 +11,7 @@ from . import boiler
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
 from .. import db
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
+from .analysis import get_analysis_data
 # import csv
 
 
@@ -107,7 +108,7 @@ def upload():
         if not allowed_file(file.filename):
             flash("Incorrect file extension. You should upload CSV files only.")
             return redirect(url_for('boiler.upload', parent_id=parent_id))
-        #filename = secure_filename(file.filename)
+        # filename = secure_filename(file.filename)
 
         data = file.read().decode('utf-8')
         data = data.strip("\r\n").rsplit('\r\n')
@@ -125,7 +126,7 @@ def upload():
                 flash("Abnormal data.")
                 return redirect(url_for('boiler.upload', parent_id=parent_id))
 
-        # # delete old values if any
+        # delete old values if any
         for node in children:
             Measurement.query.filter_by(node_id=node["id"]).\
                 filter(extract("year", Measurement.measure_date) == year).\
@@ -154,9 +155,7 @@ def analytics():
     :return:
     """
     parent_id = int(request.args["parent_id"])
-    children = get_children(parent_id)
-    boiler_id = get_boiler(parent_id)
-    return render_template('boiler/analytics.html')
+    return render_template('boiler/analytics.html', parent_id=parent_id)
 
 
 @boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])
@@ -211,7 +210,7 @@ def level(node):
     return jsonify(level_array)
 
 
-@boiler.route('/table/<node>', methods=["GET", "POST"])  # get json with measurements of chosen node
+@boiler.route('/table/<node>', methods=["GET", "POST"])
 @login_required
 def table(node):
     """
@@ -247,6 +246,19 @@ def table(node):
         table_dic[str(year)].append(current_node)
 
     return jsonify(table_dic)
+
+
+@boiler.route('/analytics/<int:node_id>', methods=["GET", "POST"])
+@login_required
+def analytics_data(node_id):
+    """
+    Provides measurements records info for chosen node for all years + norms info as json
+    :param node_id:
+    :return: json
+    """
+    result = get_analysis_data(node_id)
+
+    return jsonify(result)
 
 
 # try pagination
@@ -285,7 +297,7 @@ def pagination(node_id):
 
 def add_nodes_to_db(boiler_structure, boiler_id):
     """
-    Adds newly created boiler structure to db.
+    Adds newly created boiler structure to db
     :param boiler_structure:
     :param boiler_id:
     :return:

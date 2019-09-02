@@ -3,8 +3,6 @@ import csv
 from . import db
 from .models import Node, Measurement
 
-
-
 parent_nodes = Node.query.filter_by(boiler_id=1).with_entities(Node.parent_id).distinct().all()
 parent_nodes = [node.parent_id for node in parent_nodes if node.parent_id != None]
 nodes = Node.query.filter(~Node.id.in_(parent_nodes)).all()
