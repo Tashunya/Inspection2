@@ -12,15 +12,17 @@
 <div class="container">
  <h2>Mondi SLPK - RB-7U</h2>
  <h1>FURNACE/BOTTOM/LINE 1</h1>
- <h3>Average thinning, mm/y:</h3><span>0.2</span>
- <h3>Average thickness, mm:</h3><span>4.7</span>
+ <br>
+ <h4>Last measurements done: <span>2018</span></h4>
+ <h3>Average thinning, mm/y: <span id="avg_thinning"></span></h3>
+ <h3>Average thickness, mm: <span id="avg_thickness"></span></h3>
  <div class="row">
   <div class="col-lg-6">
    <h3>Thinning progress</h3>
    <canvas id="BarChart" width="528px" height="400px"></canvas>
   </div>
   <div class="col-lg-6">
-   <h3>2019</h3>
+    <h3>2018</h3>
     <canvas id="PieChart" width="528px" height="400px">PieChart</canvas>
   </div>
  </div>
@@ -29,67 +31,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script>
-
-var getData = $.get("/boiler/analytics/3");
-
-getData.done(function (results) {
-  var ctx = document.getElementById('BarChart').getContext('2d');
-  var stackedChart = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'bar',
-      // The data for our dataset
-      data: {
-          labels: ['2016', '2017', '2018', '2019', '2020', '2021'],
-          datasets: [
-           {
-              label: "average thickness",
-              backgroundColor: "#28A745",
-              borderColor: '#fff',
-              data: [5.4, 5.1, 4.9, 4.7, 4.5, 4.4]
-          },
-           {
-              label: "average thinning",
-              backgroundColor: "#DC3545",
-              borderColor: "#fff",
-              data: [0.3, 0.3, 0.2, 0.2, 0.2, 0.2]
-           }]
-      },
-      // Configuration options go here
-      options: {
-        legend: {
-         display: true,
-         position: 'bottom'
-        },
-        scales: {
-         xAxes: [{
-          stacked: true
-         }],
-         yAxes: [{
-          stacked: true
-         }]
-        }
-      }
-  });
-
-  var ctx = document.getElementById('PieChart').getContext('2d');
-  var pieChart = new Chart(ctx, {
-     type: 'pie',
-     data: {
-        labels: ['below default', 'below minor', 'below major', 'below defect'],
-        datasets: [{
-           backgroundColor: ["#28A745", "#ffdb0b", "#FDB45C", "#DC3545"],
-           borderColor: '#fff',
-           data: [80, 30, 15, 5]
-        }]
-       },
-     options: {
-        legend: {
-           position: 'bottom'
-        }
-     }
-  });
-})
-
+var value = {{ parent_id }};
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='analysis.js') }}">
 </script>
 
 

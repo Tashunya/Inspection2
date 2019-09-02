@@ -155,9 +155,7 @@ def analytics():
     :return:
     """
     parent_id = int(request.args["parent_id"])
-    children = get_children(parent_id)
-    boiler_id = get_boiler(parent_id)
-    return render_template('boiler/analytics.html')
+    return render_template('boiler/analytics.html', parent_id=parent_id)
 
 
 @boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])

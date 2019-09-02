@@ -17,8 +17,6 @@ $('#submit').click( function() {
             dataType: "json"
         });
 
-
-
         window.location.href = '/boiler/' + boilerId;
 
     }, "json");
