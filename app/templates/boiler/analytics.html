@@ -25,70 +25,70 @@
   </div>
  </div>
 
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script>
- var ctx = document.getElementById('BarChart').getContext('2d');
- var stackedChart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels: ['2016', '2017', '2018', '2019', '2020', '2021'],
-        datasets: [
-         {
-            label: "average thickness",
-            backgroundColor: "#28A745",
-            borderColor: '#fff',
-            data: [5.4, 5.1, 4.9, 4.7, 4.5, 4.4]
-        },
-         {
-            label: "average thinning",
-            backgroundColor: "#DC3545",
-            borderColor: "#fff",
-            data: [0.3, 0.3, 0.2, 0.2, 0.2, 0.2]
-         }]
-    },
-    // Configuration options go here
-    options: {
-      legend: {
-       display: true,
-       position: 'bottom'
+
+var getData = $.get("/boiler/analytics/3");
+
+getData.done(function (results) {
+  var ctx = document.getElementById('BarChart').getContext('2d');
+  var stackedChart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'bar',
+      // The data for our dataset
+      data: {
+          labels: ['2016', '2017', '2018', '2019', '2020', '2021'],
+          datasets: [
+           {
+              label: "average thickness",
+              backgroundColor: "#28A745",
+              borderColor: '#fff',
+              data: [5.4, 5.1, 4.9, 4.7, 4.5, 4.4]
+          },
+           {
+              label: "average thinning",
+              backgroundColor: "#DC3545",
+              borderColor: "#fff",
+              data: [0.3, 0.3, 0.2, 0.2, 0.2, 0.2]
+           }]
       },
-      scales: {
-       xAxes: [{
-        stacked: true
-       }],
-       yAxes: [{
-        stacked: true
-       }]
-      }
-    }
-});
-</script>
-
-
-<script>
-
-var ctx = document.getElementById('PieChart').getContext('2d');
-var chart = new Chart(ctx, {
-   type: 'pie',
-   data: {
-      labels: ['below default', 'below minor', 'below major', 'below defect'],
-      datasets: [{
-         backgroundColor: ["#28A745", "#ffdb0b", "#FDB45C", "#DC3545"],
-         borderColor: '#fff',
-         data: [80, 30, 15, 5]
-      }]
-     },
-   options: {
-      legend: {
+      // Configuration options go here
+      options: {
+        legend: {
+         display: true,
          position: 'bottom'
+        },
+        scales: {
+         xAxes: [{
+          stacked: true
+         }],
+         yAxes: [{
+          stacked: true
+         }]
+        }
       }
-   }
-});
+  });
+
+  var ctx = document.getElementById('PieChart').getContext('2d');
+  var pieChart = new Chart(ctx, {
+     type: 'pie',
+     data: {
+        labels: ['below default', 'below minor', 'below major', 'below defect'],
+        datasets: [{
+           backgroundColor: ["#28A745", "#ffdb0b", "#FDB45C", "#DC3545"],
+           borderColor: '#fff',
+           data: [80, 30, 15, 5]
+        }]
+       },
+     options: {
+        legend: {
+           position: 'bottom'
+        }
+     }
+  });
+})
 
 </script>
 

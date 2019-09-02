@@ -30,12 +30,12 @@
     <h3 style="display: inline;">Measurements</h3>
     <a href="" data-toggle="tooltip" title="Download Report"><i class="fas fa-file-download"></i></a>
     {% if current_user.can(Permission.BOILER_DATA_UPLOAD) %}
-    <a id="upload" href="{{ url_for('boiler.upload', parent_id=0) }}" data-toggle="tooltip" title="Upload Measurements"><i class="fas fa-file-upload"></i></a>
+    <a id="upload" href="" data-toggle="tooltip" title="Upload Measurements"><i class="fas fa-file-upload"></i></a>
     {% endif %}
 
 <!--  ELEMENT NAME   -->
 
-<h3><div id="elementName"> </div></h3>
+<h3 id="elementName"></h3>
 
 
 <!--  BUTTON GROUP WITH YEARS  -->
