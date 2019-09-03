@@ -176,7 +176,7 @@ class Boiler(db.Model):
         return '<Boiler %r>' % self.boiler_name
 
 
-class Node(db.Model): # все узлы и точки котла
+class Node(db.Model):  # все узлы и точки котла
     __tablename__ = 'nodes'
     id = db.Column(db.Integer, primary_key=True)
     boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
@@ -195,7 +195,7 @@ class Node(db.Model): # все узлы и точки котла
         return {'id': self.id, 'node_name': self.node_name}
 
 
-class Norm(db.Model): # содержит нормативные значения для измерений всех точек
+class Norm(db.Model):  # содержит нормативные значения для измерений всех точек
     __tablename__ = 'norms'
     id = db.Column(db.Integer, primary_key=True)
     default = db.Column(db.Float)
@@ -211,10 +211,9 @@ class Norm(db.Model): # содержит нормативные значения
         return {"default": self.default, "defect": self.defect}
 
 
-class Measurement(db.Model): # фактические измерения
+class Measurement(db.Model):  # фактические измерения
     __tablename__ = 'measurements'
     id = db.Column(db.Integer, primary_key=True)
-    # boiler_id = db.Column(db.Integer, db.ForeignKey('boilers.id'))
     inspector_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
     measure_date = db.Column(db.DateTime, default=datetime.utcnow)
