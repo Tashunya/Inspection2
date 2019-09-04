@@ -1,7 +1,18 @@
+#pageContent {
+    padding-bottom: 50px;
+}
+
 .col-lg-6 {
     padding-top: 40px;
 }
 
 .col-lg-6 h3 {
     text-align: center;
+}
+.pagination {
+    margin-bottom: 0;
+}
+#years {
+    padding-left: 2rem;
+    padding-right: 2rem;
 }

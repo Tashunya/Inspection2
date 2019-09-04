@@ -12,13 +12,14 @@ def get_analysis_data(parent_id):
     :return: dict
     """
     result = {"avg_thickness": 0,
-                  "avg_thinning": 0,
-                  "stacked_bar": {
-                      "labels": [],
-                      "thickness": [],
-                      "thinning": []},
-                  "pie": {}
-                  }
+              "avg_thinning": 0,
+              "last_year": 0,
+              "stacked_bar": {
+                  "labels": [],
+                  "thickness": [],
+                  "thinning": []},
+              "pie": {}
+              }
 
     prev_measurements = aliased(Measurement)
     year = func.extract('year', Measurement.measure_date).label("year")
@@ -28,10 +29,10 @@ def get_analysis_data(parent_id):
 
     # get years, avg thickness and avg thinning
     thicknesses = db.session.query(year, current_avg, (prev_avg - current_avg).label("diff")). \
-        join(Node, Node.id == Measurement.node_id).outerjoin(prev_measurements,
-                                                             and_(Measurement.node_id == prev_measurements.node_id,
-                                                                  year == prev_year + 1)). \
-        filter(Node.parent_id == parent_id).group_by(year, prev_year)
+        join(Node, Node.id == Measurement.node_id). \
+        outerjoin(prev_measurements, and_(Measurement.node_id == prev_measurements.node_id,
+                                          year == prev_year + 1)). \
+        filter(Node.parent_id == parent_id).group_by(year, prev_year).order_by(year, prev_year)
 
     if len(thicknesses.all()) > 4:
         thicknesses = thicknesses.all()[-4:]
@@ -54,6 +55,9 @@ def get_analysis_data(parent_id):
     # get average thinning
     avg_thinning = round((sum(thinning) / len(thinning)), 2)
     result["avg_thinning"] = avg_thinning
+
+    # get last year of measurements
+    result["last_year"] = labels[-1]
 
     # add predictions for next 2 years
     for i in range(2):

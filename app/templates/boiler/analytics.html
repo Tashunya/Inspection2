@@ -9,24 +9,37 @@
 {% block title %}Analytics{% endblock %}
 
 {% block page_content %}
-<div class="container">
- <h2>Mondi SLPK - RB-7U</h2>
- <h1>FURNACE/BOTTOM/LINE 1</h1>
- <br>
- <h4>Last measurements done: <span>2018</span></h4>
- <h3>Average thinning, mm/y: <span id="avg_thinning"></span></h3>
- <h3>Average thickness, mm: <span id="avg_thickness"></span></h3>
- <div class="row">
-  <div class="col-lg-6">
-   <h3>Thinning progress</h3>
-   <canvas id="BarChart" width="528px" height="400px"></canvas>
-  </div>
-  <div class="col-lg-6">
-    <h3>2018</h3>
-    <canvas id="PieChart" width="528px" height="400px">PieChart</canvas>
-  </div>
+<h2>Mondi SLPK - RB-7U</h2>
+<h1>FURNACE/BOTTOM/LINE 1</h1>
+<br>
+<h4>Last measurements done: <span id="last_year"></span></h4>
+<h4>Average thinning, mm/y: <span id="avg_thinning"></span></h4>
+<h4>Average thickness, mm: <span id="avg_thickness"></span></h4>
+<div class="row">
+ <div class="col-lg-6">
+  <h3>Thinning progress</h3>
+  <canvas id="BarChart" width="528px" height="400px"></canvas>
  </div>
-
+ <div class="col-lg-6">
+   <nav>
+     <ul class="pagination pagination-sm justify-content-center">
+       <li class="page-item">
+         <a class="page-link" aria-label="Previous">
+           <span aria-hidden="true">&laquo;</span>
+<!--           <span class="sr-only">Previous</span>-->
+         </a>
+       </li>
+       <li><h3 id="years"></h3></li>
+       <li class="page-item">
+         <a class="page-link" aria-label="Next">
+           <span aria-hidden="true">&raquo;</span>
+<!--           <span class="sr-only">Next</span>-->
+         </a>
+       </li>
+     </ul>
+   </nav>
+   <canvas id="PieChart" width="528px" height="400px">PieChart</canvas>
+ </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
