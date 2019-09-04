@@ -16,7 +16,6 @@ getData.done(function (results) {
     makePieChart(results, results["last_year"]);
 });
 
-
 function makeStackedBarChart(results) {
     var ctx = document.getElementById('BarChart').getContext('2d');
     var stackedChart = new Chart(ctx, {
@@ -56,7 +55,6 @@ function makeStackedBarChart(results) {
         }
     })
 }
-
 
 function makePieChart(results, year) {
     var ctx = document.getElementById('PieChart').getContext('2d');
