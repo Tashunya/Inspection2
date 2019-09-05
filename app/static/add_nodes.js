@@ -3,7 +3,7 @@ var default_json;
 
 
 $('#submit').click( function() {
-    $.get("/boiler/default_structure", function(data) {
+    $.get("/api/v1/default_structure", function(data) {
         default_json = data;
 
         updateStructure(); // change structure in default_json
