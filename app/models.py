@@ -132,6 +132,29 @@ class User(UserMixin, db.Model):
             return True
         return False
 
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'],
+                       expires_in=expiration)
+        return s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
+
+    def to_json(self):
+        json_user = {
+            'username': self.username,
+            'contact_number': self.contact_number,
+            'position': self.position,
+            'company_name': self.company.company_name
+        }
+        return json_user
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -162,6 +185,21 @@ class Company(db.Model):
     users = db.relationship('User', backref='company', lazy='dynamic')
     boilers = db.relationship('Boiler', backref='company', lazy='dynamic')
 
+    def to_json(self):
+        json_company = {
+            'company_name': self.company_name,
+            'location': self.location,
+            'about': self.about
+        }
+        return json_company
+
+    @staticmethod
+    def from_json(json_company):
+        company_name = json_company.get('company_name')
+        location = json_company.get('location')
+        about = json_company.get('about')
+        return Company(company_name=company_name, location=location, about=about)
+
     def __repr__(self):
         return '<Company %r>' % self.company_name
 
@@ -176,6 +214,21 @@ class Boiler(db.Model):
     boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
     nodes = db.relationship('Node', backref='boiler', lazy='dynamic')
+
+    def to_json(self):
+        json_boiler = {
+            'boiler_id': self.id,
+            'boiler_name': self.boiler_name,
+            'company_id': self.company.id,
+            'company_name': self.company.company_name
+        }
+        return json_boiler
+
+    @staticmethod
+    def from_json(json_boiler):
+        boiler_name = json_boiler.get('boiler_name')
+        company_id = json_boiler.get('company_id')
+        return Boiler(boiler_name=boiler_name, company_id=company_id)
 
     def __repr__(self):
         return '<Boiler %r>' % self.boiler_name
@@ -192,6 +245,7 @@ class Node(db.Model):  # все узлы и точки котла
     child_nodes = db.relationship('Node', backref=backref("ParentNode", remote_side=[id]), lazy='dynamic')
     norms = db.relationship("Norm", backref='node', lazy='dynamic')
     measurements = db.relationship("Measurement", backref='node', lazy='dynamic')
+
 
     def __repr__(self):
         return 'Node {}'.format(self.node_name)

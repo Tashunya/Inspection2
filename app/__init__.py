@@ -39,4 +39,7 @@ def create_app(config_name):
     from .boiler import boiler as boiler_blueprint
     app.register_blueprint(boiler_blueprint, url_prefix="/boiler")
 
+    from .api_1_0 import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix="/api/v1")
+
     return app

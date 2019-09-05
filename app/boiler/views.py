@@ -188,6 +188,7 @@ def edit_boiler(boiler_id):
 
 @boiler.route('/default_structure', methods=["GET"])
 @login_required
+@permission_required(Permission.CREATE_BOILER)
 def structure():
     """
     Provides default boiler structure as json
@@ -198,7 +199,7 @@ def structure():
     return jsonify(default_boiler_structure)
 
 
-@boiler.route('/children/<node>', methods=["GET", "POST"])
+@boiler.route('/children/<node>', methods=["GET"])
 @login_required
 def level(node):
     """
@@ -210,7 +211,7 @@ def level(node):
     return jsonify(level_array)
 
 
-@boiler.route('/table/<node>', methods=["GET", "POST"])
+@boiler.route('/table/<node>', methods=["GET"])
 @login_required
 def table(node):
     """
