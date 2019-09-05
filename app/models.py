@@ -126,6 +126,12 @@ class User(UserMixin, db.Model):
             return True
         return False
 
+    def boiler_access(self, boiler_id):
+        boiler = Boiler.query.filter_by(id=boiler_id).first()
+        if self.company_id == boiler.company_id or self.can(Permission.ALL_BOILERS_ACCESS):
+            return True
+        return False
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -170,7 +176,6 @@ class Boiler(db.Model):
     boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
     nodes = db.relationship('Node', backref='boiler', lazy='dynamic')
-    # measurements = db.relationship('Measurement', backref='boiler', lazy='dynamic')
 
     def __repr__(self):
         return '<Boiler %r>' % self.boiler_name

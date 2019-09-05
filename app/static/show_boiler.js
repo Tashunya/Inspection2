@@ -77,8 +77,6 @@ function emptyData() {
     $("tbody").find("tr").remove();
     $(".btn-group").find("button").remove();
     $("div[colspan]").html("No data for chosen node. Please upload the data.")
-    // var newRow = '<div colspan="7">No data for chosen node. Please upload the data.</div>';
-    // results.append(newRow);
 }
 
 // change title with element name
@@ -86,10 +84,6 @@ function changeElementName() {
     var block = $('#block option:selected').text();
     var level_1 = $('#level_1 option:selected').text();
     var level_2 = $('#level_2 option:selected').text();
-    // var chosenNode = $('#level_2').val();
-    // var link = "/boiler/analytics?parent_id=" + chosenNode;
-    // var analyticsBtn = ' <a class="btn btn-warning btn-sm" href="' + link + '"> Analytics</a>';
-    // $('#elementName').html(block + '/' + level_1 + '/' + level_2 + analyticsBtn)
     $('#elementName').html(block + '/' + level_1 + '/' + level_2)
 }
 
