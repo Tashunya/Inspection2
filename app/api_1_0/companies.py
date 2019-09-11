@@ -1,3 +1,7 @@
+"""
+This module is used to provide data to serve main views
+"""
+
 from flask import jsonify, g
 from ..models import Company, Permission, User, Boiler
 from . import api
@@ -9,60 +13,102 @@ from .decorators import permission_required
 @api.route('/companies/')
 @permission_required(Permission.ALL_BOILERS_ACCESS)
 def get_companies():
+    """
+    Provides list of all companies
+    :return: {companies: [{about: , company_name: , location: }, ]
+    """
     companies = Company.query.all()
     return jsonify({'companies': [company.to_json() for company in companies]})
-
-
-@api.route('/boilers/')
-@permission_required(Permission.ALL_BOILERS_ACCESS)
-def get_boilers():
-    boilers = Boiler.query.all()
-    return jsonify({'boilers': [boiler.to_json() for boiler in boilers]})
 
 
 @api.route('/companies/<int:company_id>')
 @permission_required(Permission.ALL_BOILERS_ACCESS)
 def get_company(company_id):
+    """
+    Provides information about one company
+    :param company_id:
+    :return:
+    """
     company = Company.query.get_or_404(company_id)
     return jsonify({'company': company.to_json()})
+
+
+@api.route('/boilers/')
+@permission_required(Permission.ALL_BOILERS_ACCESS)
+def get_boilers():
+    """
+    Provides list of all boilers
+    :return: {boilers: [{boiler_id: , company_name: , location: }, ]
+    """
+    boilers = Boiler.query.all()
+    return jsonify({'boilers': [boiler.to_json() for boiler in boilers]})
 
 
 @api.route('/boilers/<int:boiler_id>')
 @permission_required(Permission.ALL_BOILERS_ACCESS)
 def get_boiler(boiler_id):
+    """
+    Provides information about one boiler
+    :param boiler_id:
+    :return:
+    """
     boiler = Boiler.query.get_or_404(boiler_id)
     return jsonify({'boiler': boiler.to_json()})
 
 
+@api.route('/users/<int:user_id>')
+@permission_required(Permission.ALL_BOILERS_ACCESS)
+def get_user(user_id):
+    """
+    Provides information about one user
+    :param user_id:
+    :return:
+    """
+    user = User.query.get_or_404(user_id)
+    return jsonify({'user': user.to_json()})
+
+
 # FOR USERS
 @api.route('/company/')
-@permission_required(Permission.OWN_BOILER_ACCESS)
 def get_user_company():
-    company_id = g.current_user.company.id
-    company = Company.query.get_or_404(company_id)
+    """
+    Provides information about current user's company
+    :return: json with company or 404
+    """
+    company = g.current_user.company
     return jsonify({'company': company.to_json()})
 
 
 @api.route('/company/boilers')
-@permission_required(Permission.OWN_BOILER_ACCESS)
 def get_company_boilers():
-    company_id = g.current_user.company.id
-    boilers = Boiler.query.filter_by(company_id=company_id).all()
+    """
+
+    :return:
+    """
+    company = g.current_user.company
+    boilers = company.boilers.order_by(Boiler.boiler_name)
     return jsonify({'boilers': [boiler.to_json() for boiler in boilers]})
 
 
 @api.route('/company/boilers/<int:boiler_id>')
-@permission_required(Permission.OWN_BOILER_ACCESS)
 def get_company_boiler(boiler_id):
-    if g.current_user.boiler_access(boiler_id):
-        boiler = Boiler.query.get_or_404(boiler_id)
-        return jsonify({'boiler': boiler.to_json()})
-    return forbidden('Insufficient permissions')
+    """
+
+    :param boiler_id:
+    :return:
+    """
+    boiler = Boiler.query.get_or_404(boiler_id)
+    if not g.current_user.boiler_access(boiler_id):
+        return forbidden('Insufficient permissions')
+    return jsonify({'boiler': boiler.to_json()})
 
 
 @api.route('/company/users')
 def get_company_users():
-    company_id = g.current_user.company.id
-    users = User.query.filter_by(company_id=company_id).all()
+    """
+
+    :return:
+    """
+    users = g.current_user.company.users.order_by(User.username)
     return jsonify({'users': [user.to_json() for user in users]})
 

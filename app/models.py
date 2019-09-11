@@ -246,12 +246,15 @@ class Node(db.Model):  # все узлы и точки котла
     norms = db.relationship("Norm", backref='node', lazy='dynamic')
     measurements = db.relationship("Measurement", backref='node', lazy='dynamic')
 
-
     def __repr__(self):
         return 'Node {}'.format(self.node_name)
 
     def as_dict(self):
         return {'id': self.id, 'node_name': self.node_name}
+
+    def get_children(self):
+        children = [child.as_dict() for child in self.child_nodes.all()]
+        return children
 
 
 class Norm(db.Model):  # содержит нормативные значения для измерений всех точек

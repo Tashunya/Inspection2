@@ -1,7 +1,7 @@
 import unittest
 import time
 from app import create_app, db
-from app.models import User, Role, Permission, AnonymousUser
+from app.models import User, Role, Permission, AnonymousUser, Company
 
 
 class UserModelTestCase(unittest.TestCase):
@@ -107,5 +107,17 @@ class UserModelTestCase(unittest.TestCase):
         self.assertFalse(u.can(Permission.CREATE_BOILER))
         self.assertFalse(u.can(Permission.VIEW_PROFILES))
 
+    def test_to_json(self):
+        c1 = Company(company_name="Company1")
+        db.session.add(c1)
+        r = Role.query.filter_by(name='Repr').first()
+        u = User(email='repr@example.com', password='cat', role=r,
+                 contact_number='7777777777', position='engineer', company=c1)
+        db.session.add(u)
+        db.session.commit()
+        with self.app.test_request_context('/'):
+            json_user = u.to_json()
+        expected_keys = ['username', 'contact_number', 'position', 'company_name']
+        self.assertEqual(sorted(json_user.keys()), sorted(expected_keys))
 
 

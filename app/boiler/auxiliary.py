@@ -8,7 +8,7 @@ def add_nodes_to_db(boiler_structure, boiler_id):
     Adds newly created boiler structure to db
     :param boiler_structure:
     :param boiler_id:
-    :return:
+    :return: None
     """
 
     last_id = db.session.query(func.max(Node.id)).first()[0]
@@ -66,40 +66,6 @@ def add_nodes_to_db(boiler_structure, boiler_id):
 
                         current_id += 1
     db.session.commit()
-
-
-def get_children(node):
-    """
-    Returns given node's children as dict
-    :param node:
-    :return:
-    """
-    level_elements = Node.query.filter_by(parent_id=node).all()
-    level_array = [element.as_dict() for element in level_elements]
-    return level_array
-
-
-def get_parent(node):
-    """
-    Returns given node's parent id
-    :param node:
-    :return:
-    """
-    node = Node.query.filter_by(id=node).first()
-    parent_id = node.parent_id
-    return parent_id
-
-
-def get_boiler(node):
-    """
-    Returns given node's boiler id
-    :param node:
-    :return:
-    """
-    node = Node.query.filter_by(id=node).first()
-    boiler_id = node.boiler_id
-    return boiler_id
-
 
 def allowed_file(filename):
     """

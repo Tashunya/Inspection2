@@ -1,5 +1,5 @@
 var value;
-var getData = $.get("/boiler/analytics/" + value);
+var getData = $.get("/api/v1/analytics/" + value);
 var jsonObjResults;
 
 getData.done(function (results) {
@@ -81,8 +81,6 @@ function makePieChart(results, year) {
 //     var years = Object.keys(jsonObjResults["pie"]);
 //
 //     var choice = this;
-//     console.log(this);
-//     console.log(this.getAttribute('aria-label'));
 //     if (this.getAttribute('aria-label') === "Previous") {
 //         alert('<<<')
 //     }

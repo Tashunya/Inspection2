@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, CompanyRegistrationForm, EditCompanyForm
 from .. import db
-from ..models import User, Company, Role, Boiler, Permission
+from ..models import User, Company, Role, Permission
 from ..decorators import permission_required
 
 
@@ -19,8 +19,8 @@ def index():
         return redirect(url_for('.inspector'))
     if current_user.role.name == "Administrator":
         return redirect(url_for('.admin'))
-    company = Company.query.filter_by(id=current_user.company_id).first()
-    boilers = Boiler.query.filter_by(company_id=current_user.company_id).all()
+    company = current_user.company
+    boilers = company.boilers
     return render_template('index.html', company=company, boilers=boilers)
 
 
@@ -55,9 +55,7 @@ def user(id):
     user = User.query.filter_by(id=id).first_or_404()
     if not current_user.company_access(user.company_id):
         abort(403)
-    company = Company.query.filter_by(id=current_user.company_id).first()
-    role = Role.query.filter_by(id=current_user.role_id).first()
-    return render_template('user.html', user=user, company=company, role=role)
+    return render_template('user.html', user=user, company=user.company, role=user.role)
 
 
 @main.route('/edit-profile', methods=["GET", "POST"])
@@ -133,8 +131,8 @@ def company(id):
     if not current_user.company_access(id):
         abort(403)
     company = Company.query.filter_by(id=id).first_or_404()
-    employees = User.query.filter_by(company_id=id).order_by(User.username).all()
-    boilers = Boiler.query.filter_by(company_id=id).all()
+    employees = company.users.order_by(User.username)
+    boilers = company.boilers
     return render_template('company.html', company=company, employees=employees, boilers=boilers)
 
 

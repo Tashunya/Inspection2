@@ -9,11 +9,7 @@ from . import boiler
 from .. import db
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
-from .analysis import get_analysis_data
-from .auxiliary import get_boiler, get_children, get_parent, add_nodes_to_db, allowed_file
-# import csv
-
-
+from .auxiliary import add_nodes_to_db, allowed_file
 from ..decorators import permission_required
 
 # =====================================================
@@ -90,9 +86,11 @@ def upload():
     :return:
     """
     form = UploadForm()
+
     parent_id = int(request.args["parent_id"])
-    children = get_children(parent_id)
-    boiler_id = get_boiler(parent_id)
+    node = Node.filter_by(id=parent_id).first_or_404()
+    children = node.get_children()
+    boiler_id = node.boiler.id
     inspector_id = current_user.id
 
     if request.method == "POST":
@@ -126,15 +124,15 @@ def upload():
                 return redirect(url_for('boiler.upload', parent_id=parent_id))
 
         # delete old values if any
-        for node in children:
-            Measurement.query.filter_by(node_id=node["id"]).\
+        for child in children:
+            Measurement.query.filter_by(node_id=child["id"]).\
                 filter(extract("year", Measurement.measure_date) == year).\
                 delete(synchronize_session=False)
 
         # save new values
-        for node, val in zip(children, data):
+        for child, val in zip(children, data):
             new_measurement = Measurement(inspector_id=inspector_id,
-                                          node_id=node["id"],
+                                          node_id=child["id"],
                                           value=val,
                                           measure_date=date.data)
             db.session.add(new_measurement)
@@ -185,18 +183,6 @@ def edit_boiler(boiler_id):
 # =============================
 
 
-@boiler.route('/children/<node>', methods=["GET"])
-@login_required
-def level(node):
-    """
-    Provides children nodes of the give node as json
-    :param node:
-    :return: json
-    """
-    level_array = get_children(node)
-    return jsonify(level_array)
-
-
 @boiler.route('/table/<node>', methods=["GET"])
 @login_required
 def table(node):
@@ -221,19 +207,6 @@ def table(node):
         table_dic[str(year)].append(current_node)
 
     return jsonify(table_dic)
-
-
-@boiler.route('/analytics/<int:node_id>', methods=["GET", "POST"])
-@login_required
-def analytics_data(node_id):
-    """
-    Provides measurements records info for chosen node for all years + norms info as json
-    :param node_id:
-    :return: json
-    """
-    result = get_analysis_data(node_id)
-
-    return jsonify(result)
 
 
 # try pagination

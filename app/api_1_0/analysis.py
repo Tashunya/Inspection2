@@ -1,3 +1,7 @@
+"""
+This module provides one function - get_analysis_data() to get data for analytics from db
+"""
+
 from sqlalchemy.sql.expression import func, and_, case
 from sqlalchemy.orm import aliased
 from .. import db
@@ -6,8 +10,8 @@ from ..models import Node, Norm, Measurement
 
 def get_analysis_data(parent_id):
     """
-    Provides analysis of average thickness and average thinning of given parent node's children nodes and
-    give predictions for the next 2 years based on analysis
+    Provides analysis of average thickness and average thinning of given parent node's children
+    nodes and gives predictions for the next 2 years based on analysis
     :param parent_id:
     :return: dict
     """

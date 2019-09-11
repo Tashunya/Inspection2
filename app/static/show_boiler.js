@@ -6,7 +6,7 @@ lvlOne = $("select[id='level_1']");
 lvlTwo = $("select[id='level_2']");
 
 $('#block').change( function() {
-    $.get("/boiler/children/" + this.value, levelOneChoice, "json");
+    $.get("/api/v1/children/" + this.value, levelOneChoice, "json");
 });
 
 function levelOneChoice(childrenArray) {
@@ -18,7 +18,7 @@ function levelOneChoice(childrenArray) {
 
 
 $('#level_1').change( function() {
-    $.get("/boiler/children/" + this.value, levelTwoChoice, "json");
+    $.get("/api/v1/children/" + this.value, levelTwoChoice, "json");
 });
 
 function levelTwoChoice(childrenArray) {
