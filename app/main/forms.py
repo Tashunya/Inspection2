@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, BooleanField, TextAreaField, ValidationError
 from wtforms_alchemy import QuerySelectField
 from wtforms.validators import DataRequired, Length, Email, Optional
-from wtforms import ValidationError
 from ..models import Role, User, Company
 
 

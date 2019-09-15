@@ -23,6 +23,16 @@ def test():
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
+@manager.command
+def deploy():
+    from flask_migrate import upgrade
+    from app.models import Role
+    # migrate db to latest revision
+    upgrade()
+    # create user roles
+    Role.insert_roles()
+
+
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 

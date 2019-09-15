@@ -1,3 +1,9 @@
+"""
+Module is used to provide auxiliary functions for boiler views
+Function add_node_to_db saves new boiler structure to db
+Function allowed_file checks if given file has .csv extension
+"""
+
 from sqlalchemy.sql.expression import func
 from .. import db
 from ..models import Node, Norm
@@ -66,6 +72,7 @@ def add_nodes_to_db(boiler_structure, boiler_id):
 
                         current_id += 1
     db.session.commit()
+
 
 def allowed_file(filename):
     """

@@ -2,7 +2,7 @@
 This module is used to manage boiler routes.
 """
 
-from flask import render_template, redirect, url_for, flash, abort, json, jsonify, request
+from flask import render_template, redirect, url_for, flash, abort, json, request
 from flask_login import login_required, current_user
 from sqlalchemy import extract
 from . import boiler
@@ -178,37 +178,6 @@ def edit_boiler(boiler_id):
     return render_template('boiler/edit_boiler.html', boiler=requested_boiler, form=form)
 
 
-# =============================
-# AUXILIARY ROUTES
-# =============================
-
-
-@boiler.route('/table/<node>', methods=["GET"])
-@login_required
-def table(node):
-    """
-    Provides measurements records info for chosen node for all years + norms info as json
-    :param node:
-    :return: json
-    """
-    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
-                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
-        outerjoin(Norm, Norm.node_id == Node.id). \
-        outerjoin(Measurement, Measurement.node_id == Node.id). \
-        filter(Node.parent_id == node). \
-        filter(Measurement.value != None).all()
-
-    table_dic = {}
-
-    for current_node in table_query:
-        year = current_node[1].year
-        if str(year) not in table_dic:
-            table_dic[str(year)] = []
-        table_dic[str(year)].append(current_node)
-
-    return jsonify(table_dic)
-
-
 # try pagination
 @boiler.route('/pagination/<int:node_id>', methods=["GET"])
 @login_required
@@ -219,9 +188,8 @@ def pagination(node_id):
     :param node_id:
     :return:
     """
-    boiler = db.session.query(Boiler.boiler_name).join(Node, Boiler.id == Node.boiler_id). \
-        filter(Node.id == node_id).first()[0]
-    element = Node.query.filter_by(id=node_id).first().node_name
+    requested_node = Node.query.get_or_404(node_id)
+    requested_boiler = requested_node.boiler
     page = request.args.get('page', 1, type=int)
 
     table_query = db.session.query(Node.node_name, Node.index, Measurement.measure_date,
@@ -236,4 +204,4 @@ def pagination(node_id):
     rows = pagination_list.items
 
     return render_template('boiler/pagination.html', rows=rows, pagination=pagination_list,
-                           node_id=node_id, boiler=boiler, element=element)
+                           node_id=node_id, boiler=requested_boiler, element=requested_node)

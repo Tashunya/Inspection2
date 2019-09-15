@@ -82,8 +82,8 @@ def get_user_company():
 @api.route('/company/boilers')
 def get_company_boilers():
     """
-
-    :return:
+    Provides information about current user's company's boilers
+    :return: json
     """
     company = g.current_user.company
     boilers = company.boilers.order_by(Boiler.boiler_name)
@@ -93,9 +93,9 @@ def get_company_boilers():
 @api.route('/company/boilers/<int:boiler_id>')
 def get_company_boiler(boiler_id):
     """
-
+    Provides information about current user's company's boiler
     :param boiler_id:
-    :return:
+    :return: json
     """
     boiler = Boiler.query.get_or_404(boiler_id)
     if not g.current_user.boiler_access(boiler_id):
@@ -106,9 +106,8 @@ def get_company_boiler(boiler_id):
 @api.route('/company/users')
 def get_company_users():
     """
-
-    :return:
+    Provides information about current user's company's users
+    :return: json
     """
     users = g.current_user.company.users.order_by(User.username)
     return jsonify({'users': [user.to_json() for user in users]})
-

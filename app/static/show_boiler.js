@@ -43,7 +43,7 @@ $('#chooseNode').click( function() {
 
     var chosenNode = $('#level_2').val();
 
-    $.get("/boiler/table/" + chosenNode, chooseElement, "json");
+    $.get("/api/v1/table/" + chosenNode, chooseElement, "json");
 
     function chooseElement(tableArray) {
         // set upload link

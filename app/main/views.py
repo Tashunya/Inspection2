@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, current_app, flash, abort
+from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, CompanyRegistrationForm, EditCompanyForm
@@ -29,7 +29,7 @@ def index():
 def inspector():
     if current_user.role.name == "Inspector":
         company_list = Company.query.order_by(Company.company_name).all()
-        return render_template('inspector.html', company_list=company_list)
+        return render_template('inspector_admin.html', company_list=company_list)
     else:
         abort(403)
 
@@ -39,9 +39,8 @@ def inspector():
 def admin():
     if current_user.role.name == "Administrator":
         company_list = Company.query.order_by(Company.company_name).all()
-        return render_template('inspector.html', company_list=company_list)
-    else:
-        abort(403)
+        return render_template('inspector_admin.html', company_list=company_list)
+    abort(403)
 
 
 # ====================================
@@ -116,8 +115,8 @@ def register_company():
     form = CompanyRegistrationForm()
     if form.validate_on_submit():
         company = Company(company_name=form.company_name.data,
-                    location=form.location.data,
-                    about=form.about.data)
+                          location=form.location.data,
+                          about=form.about.data)
         db.session.add(company)
         db.session.commit()
         flash("New company registered")
@@ -154,5 +153,3 @@ def edit_company(id):
     form.location.data = company.location
     form.about.data = company.about
     return render_template('edit_company.html', form=form, company=company)
-
-

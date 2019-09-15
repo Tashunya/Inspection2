@@ -83,7 +83,8 @@ def get_analysis_data(parent_id):
     # get data
     year = func.extract('year', Measurement.measure_date).label("year")
     pie_data = db.session.query(year, category, func.count(1).label("cnt")). \
-        join(Node, Node.id == Measurement.node_id).join(Norm, Norm.node_id == Measurement.node_id). \
+        join(Node, Node.id == Measurement.node_id). \
+        join(Norm, Norm.node_id == Measurement.node_id). \
         filter(Node.parent_id == parent_id).group_by(year, category)
 
     # calculations
