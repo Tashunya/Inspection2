@@ -88,7 +88,7 @@ def upload():
     form = UploadForm()
 
     parent_id = int(request.args["parent_id"])
-    node = Node.filter_by(id=parent_id).first_or_404()
+    node = Node.query.filter_by(id=parent_id).first()
     children = node.get_children()
     boiler_id = node.boiler.id
     inspector_id = current_user.id
