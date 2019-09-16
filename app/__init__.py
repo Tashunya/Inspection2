@@ -30,6 +30,10 @@ def create_app(config_name):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
+    if app.config['SSL_REDIRECT']:
+        from flask_sslify import SSLify
+        sslify = SSLify(app)
+
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

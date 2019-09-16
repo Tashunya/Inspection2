@@ -1,6 +1,10 @@
+"""
+Testing company model
+"""
+
 import unittest
 from app import create_app, db
-from app.models import Company, User, Role, Permission, Boiler
+from app.models import Company, User, Role, Boiler
 
 
 class CompanyModelTestCase(unittest.TestCase):

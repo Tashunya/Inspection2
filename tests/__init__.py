@@ -1,0 +1,3 @@
+"""
+Initiates tests module
+"""

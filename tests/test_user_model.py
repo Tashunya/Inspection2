@@ -1,3 +1,7 @@
+"""
+Testing user model
+"""
+
 import unittest
 import time
 from app import create_app, db
