@@ -8,7 +8,6 @@
     <h1>Add Nodes</h1>
 </div>
 
-
     {% for block in structure.structure %}
     <h3 class="block_name"> {{ block.node_name }} </h3>
     <table class="table">
@@ -71,11 +70,7 @@
 <script>
     var addNodesUrl = "{{ url_for('boiler.add_nodes', boiler_id=id) }}";
     var boilerId = "{{ id }}";
-</script>
-
-
-
-<script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
+</script><script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
 
 
 {% endblock %}

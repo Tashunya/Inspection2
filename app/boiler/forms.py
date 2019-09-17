@@ -21,7 +21,8 @@ class CreateBoilerForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(CreateBoilerForm, self).__init__(*args, **kwargs)
         self.company.choices = [(company.id, company.company_name)
-                                for company in Company.query.all()]
+                                for company in Company.query.order_by(Company.company_name).all()
+                                if company.company_name != "Inspection Company"]
 
 
 class CreateBoilerNodesForm(FlaskForm):
@@ -29,10 +30,6 @@ class CreateBoilerNodesForm(FlaskForm):
     Form to create boiler nodes.
     """
     submit = SubmitField("Add Nodes")
-
-
-# def node_query(boiler_id, parent_id):
-#     return Node.query.filter_by(boiler_id=boiler_id).filter_by(parent_id=parent_id)
 
 
 class NodeSelectForm(FlaskForm):

@@ -51,7 +51,6 @@ $('#chooseNode').click( function() {
         $("a#upload").attr("href", link);
 
         if (Object.entries(tableArray).length === 0) {
-            console.log("No data!");
             changeElementName();
             emptyData();
         } else {
@@ -119,6 +118,7 @@ $("div.btn-group").on('click', 'button', function() {
 function createTable(data) {
     var results = $("tbody");
     results.find("tr").remove();
+    $("div[colspan]").remove();
     data.forEach(function(element, index) {
         var newRow = '<tr><td>' + (index+1) + '</td><td>';
         var columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];

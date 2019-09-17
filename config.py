@@ -42,8 +42,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") #or \
-                              # f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PW}@{POSTGRES_URL}/{POSTGRES_DB}'
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 
     @classmethod
     def init_app(cls, app):

@@ -54,7 +54,7 @@ def add_nodes(boiler_id):
         updated_structure = request.get_json()['structure']
         add_nodes_to_db(updated_structure, boiler_id)
         flash("Nodes created")
-        # return render_template("boiler/show_boiler.html", id=boiler_id)
+        # return render_template("boiler/show_boiler.html", boiler_id=boiler_id)
 
     return render_template('boiler/add_nodes.html', id=boiler_id,
                            form=form, structure=default_structure)
@@ -72,9 +72,32 @@ def show_boiler(boiler_id):
     if not current_user.company_access(requested_boiler.company_id):
         abort(403)
     company = Company.query.filter_by(id=requested_boiler.company_id).first()
-    form = NodeSelectForm(boiler_id=requested_boiler.id)
+    form = NodeSelectForm(boiler_id=boiler_id)
     return render_template('boiler/show_boiler.html', boiler=requested_boiler,
                            company=company, form=form)
+
+
+@boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])
+@login_required
+@permission_required(Permission.CREATE_BOILER)
+def edit_boiler(boiler_id):
+    """
+     Manages route for the page where boiler info is edited.
+    :param boiler_id:
+    :return:
+    """
+    requested_boiler = Boiler.query.get_or_404(boiler_id)
+    form = CreateBoilerForm(boiler=requested_boiler)
+    if form.validate_on_submit():
+        requested_boiler.boiler_name = form.boiler_name.data
+        requested_boiler.company = Company.query.get(form.company.data)
+        db.session.add(requested_boiler)
+        db.session.commit()
+        flash("The boiler has been updated.")
+        return redirect(url_for('boiler.show_boiler', boiler_id=boiler_id))
+    form.boiler_name.data = requested_boiler.boiler_name
+    form.company.data = requested_boiler.company
+    return render_template('boiler/edit_boiler.html', boiler=requested_boiler, form=form)
 
 
 @boiler.route("/upload", methods=["GET", "POST"])
@@ -153,29 +176,6 @@ def analytics():
     """
     parent_id = int(request.args["parent_id"])
     return render_template('boiler/analytics.html', parent_id=parent_id)
-
-
-@boiler.route('/edit-boiler/<boiler_id>', methods=["GET", "POST"])
-@login_required
-@permission_required(Permission.CREATE_BOILER)
-def edit_boiler(boiler_id):
-    """
-     Manages route for the page where boiler info is edited.
-    :param boiler_id:
-    :return:
-    """
-    requested_boiler = Boiler.query.get_or_404(boiler_id)
-    form = CreateBoilerForm(boiler=requested_boiler)
-    if form.validate_on_submit():
-        requested_boiler.boiler_name = form.boiler_name.data
-        requested_boiler.company = Company.query.get(form.company.data)
-        db.session.add(requested_boiler)
-        db.session.commit()
-        flash("The boiler has been updated.")
-        return redirect(url_for('boiler.show_boiler', id=boiler_id))
-    form.boiler_name.data = requested_boiler.boiler_name
-    form.company.data = requested_boiler.company
-    return render_template('boiler/edit_boiler.html', boiler=requested_boiler, form=form)
 
 
 # try pagination
