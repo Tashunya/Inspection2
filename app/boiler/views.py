@@ -2,14 +2,14 @@
 This module is used to manage boiler routes.
 """
 
-from flask import render_template, redirect, url_for, flash, abort, json, request
+from flask import render_template, redirect, url_for, flash, abort, json, request, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy import extract
 from . import boiler
 from .. import db
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
-from .auxiliary import add_nodes_to_db, allowed_file
+from .auxiliary import add_nodes_to_db, allowed_file, get_analysis_data
 from ..decorators import permission_required
 
 # =====================================================
@@ -171,7 +171,7 @@ def upload():
 @login_required
 def analytics():
     """
-    Manages route for the analytics page.
+    Manage route for the analytics page.
     :return:
     """
     parent_id = int(request.args["parent_id"])
@@ -184,7 +184,7 @@ def analytics():
 @permission_required(Permission.CREATE_BOILER)
 def pagination(node_id):
     """
-    Manages route for the page with boiler node info using pagination
+    Manage route for the page with boiler node info using pagination
     :param node_id:
     :return:
     """
@@ -205,3 +205,55 @@ def pagination(node_id):
 
     return render_template('boiler/pagination.html', rows=rows, pagination=pagination_list,
                            node_id=node_id, boiler=requested_boiler, element=requested_node)
+
+
+@boiler.route('/children/<node>', methods=["GET", "POST"])
+@login_required
+def level(node):
+    """
+    Provide children nodes of the give node as json
+    :param node:
+    :return: json
+    """
+    node = Node.query.filter_by(id=node).first_or_404()
+    children = node.get_children()
+    return jsonify(children)
+
+
+@boiler.route('/table/<node>', methods=["GET", "POST"])
+@login_required
+def table(node):
+    """
+    Return measurements records info for chosen node for all years + norms info as json
+    :param node:
+    :return: json
+    """
+    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
+                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
+        outerjoin(Norm, Norm.node_id == Node.id). \
+        outerjoin(Measurement, Measurement.node_id == Node.id). \
+        filter(Node.parent_id == node). \
+        filter(Measurement.value != None)
+
+    table_dic = {}
+
+    for current_node in table_query.all():
+        year = current_node[1].year
+        if str(year) not in table_dic:
+            table_dic[str(year)] = []
+        table_dic[str(year)].append(current_node)
+
+    return jsonify(table_dic)
+
+
+@boiler.route('/analytics/<int:node_id>', methods=["GET", "POST"])
+@login_required
+def analytics_data(node_id):
+    """
+    Provide measurements records info for chosen node for all years + norms info as json
+    :param node_id:
+    :return: json
+    """
+    result = get_analysis_data(node_id)
+
+    return jsonify(result)

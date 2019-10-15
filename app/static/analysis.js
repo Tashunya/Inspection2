@@ -1,5 +1,5 @@
 var value;
-var getData = $.get("/api/v1/analytics/" + value);
+var getData = $.get("/boiler/analytics/" + value);
 var jsonObjResults;
 
 getData.done(function (results) {

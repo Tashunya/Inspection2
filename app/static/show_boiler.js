@@ -6,7 +6,7 @@ lvlOne = $("select[id='level_1']");
 lvlTwo = $("select[id='level_2']");
 
 $('#block').change( function() {
-    $.get("/api/v1/children/" + this.value, levelOneChoice, "json");
+    $.get("/boiler/children/" + this.value, levelOneChoice, "json");
 });
 
 function levelOneChoice(childrenArray) {
@@ -18,7 +18,7 @@ function levelOneChoice(childrenArray) {
 
 
 $('#level_1').change( function() {
-    $.get("/api/v1/children/" + this.value, levelTwoChoice, "json");
+    $.get("/boiler/children/" + this.value, levelTwoChoice, "json");
 });
 
 function levelTwoChoice(childrenArray) {
@@ -43,7 +43,7 @@ $('#chooseNode').click( function() {
 
     var chosenNode = $('#level_2').val();
 
-    $.get("/api/v1/table/" + chosenNode, chooseElement, "json");
+    $.get("/boiler/table/" + chosenNode, chooseElement, "json");
 
     function chooseElement(tableArray) {
         // set upload link

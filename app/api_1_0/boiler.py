@@ -65,11 +65,11 @@ def table_data(node_id):
         outerjoin(Norm, Norm.node_id == Node.id). \
         outerjoin(Measurement, Measurement.node_id == Node.id). \
         filter(Node.parent_id == node_id). \
-        filter(Measurement.value != None).all()
+        filter(Measurement.value != None)
 
     table_dic = {}
 
-    for current_node in table_query:
+    for current_node in table_query.all():
         year = current_node[1].year
         if str(year) not in table_dic:
             table_dic[str(year)] = []
