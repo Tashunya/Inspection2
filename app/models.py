@@ -213,7 +213,7 @@ class Boiler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-    nodes = db.relationship('Node', backref='boiler', lazy='dynamic')
+    nodes = db.relationship('Node', cascade='all,delete', backref='boiler', lazy='dynamic')
 
     def to_json(self):
         json_boiler = {
@@ -242,9 +242,12 @@ class Node(db.Model):  # все узлы и точки котла
     index = db.Column(db.Integer)
     node_name = db.Column(db.String(64))
     picture = db.Column(db.LargeBinary)
-    child_nodes = db.relationship('Node', backref=backref("ParentNode", remote_side=[id]), lazy='dynamic')
-    norms = db.relationship("Norm", backref='node', lazy='dynamic')
-    measurements = db.relationship("Measurement", backref='node', lazy='dynamic')
+    child_nodes = db.relationship('Node', backref=backref("ParentNode",
+                                                          remote_side=[id]), lazy='dynamic')
+    norms = db.relationship("Norm", cascade='all,delete',
+                            backref='node', lazy='dynamic')
+    measurements = db.relationship("Measurement", cascade='all,delete',
+                                   backref='node', lazy='dynamic')
 
     def __repr__(self):
         return 'Node {}'.format(self.node_name)
