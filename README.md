@@ -5,9 +5,7 @@ https://boiler-inspection.herokuapp.com/
 
 Test User:
 
-login: testuser@inspection.com 
-
-password: testuser
+testuser@inspection.com / testuser
 
 Система контроля и учета изменений толщины труб промышленных котлов. 
 
