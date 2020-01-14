@@ -9,8 +9,8 @@
 {% block title %}Analytics{% endblock %}
 
 {% block page_content %}
-<h2>Mondi SLPK - RB-7U</h2>
-<h1>FURNACE/BOTTOM/LINE 1</h1>
+<h2>{{ company.company_name }} - {{ boiler.boiler_name }}</h2>
+<h1> {{ element_name|map('capitalize')|join(' / ') }}</h1>
 <br>
 <h4>Last measurements done: <span id="last_year"></span></h4>
 <h4>Average thinning, mm/y: <span id="avg_thinning"></span></h4>

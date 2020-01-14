@@ -175,7 +175,14 @@ def analytics():
     :return:
     """
     parent_id = int(request.args["parent_id"])
-    return render_template('boiler/analytics.html', parent_id=parent_id)
+    boiler = Node.query.filter_by(id=parent_id).first().boiler
+    company = boiler.company
+    level_2_node = Node.query.filter_by(id=parent_id).first()
+    level_1_node = level_2_node.ParentNode
+    block = level_1_node.ParentNode
+    element_name = [block.node_name, level_1_node.node_name, level_2_node.node_name]
+    return render_template('boiler/analytics.html', parent_id=parent_id,
+                           boiler=boiler, company=company, element_name=element_name)
 
 
 # try pagination
@@ -207,7 +214,7 @@ def pagination(node_id):
                            node_id=node_id, boiler=requested_boiler, element=requested_node)
 
 
-@boiler.route('/children/<node>', methods=["GET", "POST"])
+@boiler.route('/children/<node>', methods=["GET"])
 @login_required
 def level(node):
     """
@@ -220,7 +227,7 @@ def level(node):
     return jsonify(children)
 
 
-@boiler.route('/table/<node>', methods=["GET", "POST"])
+@boiler.route('/table/<node>', methods=["GET"])
 @login_required
 def table(node):
     """
@@ -246,7 +253,7 @@ def table(node):
     return jsonify(table_dic)
 
 
-@boiler.route('/analytics/<int:node_id>', methods=["GET", "POST"])
+@boiler.route('/analytics/<int:node_id>', methods=["GET"])
 @login_required
 def analytics_data(node_id):
     """

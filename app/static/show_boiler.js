@@ -80,27 +80,27 @@ function emptyData() {
 
 // change title with element name
 function changeElementName() {
-    var block = $('#block option:selected').text();
-    var level_1 = $('#level_1 option:selected').text();
-    var level_2 = $('#level_2 option:selected').text();
+    let block = $('#block option:selected').text();
+    let level_1 = $('#level_1 option:selected').text();
+    let level_2 = $('#level_2 option:selected').text();
     $('#elementName').html(block + '/' + level_1 + '/' + level_2)
 }
 
 // add analytics button
 function addAnalyticsBtn() {
-    var chosenNode = $('#level_2').val();
-    var link = "/boiler/analytics?parent_id=" + chosenNode;
-    var analyticsBtn = ' <a class="btn btn-warning btn-sm" href="' + link + '"> Analytics</a>';
+    let chosenNode = $('#level_2').val();
+    let link = "/boiler/analytics?parent_id=" + chosenNode;
+    let analyticsBtn = ' <a class="btn btn-warning btn-sm" href="' + link + '"> Analytics</a>';
     $('#elementName').append(analyticsBtn)
 }
 
 // create button group with years
 function createBtnGroup(tableArray) {
-    var btnGroup = $(".btn-group");
+    let btnGroup = $(".btn-group");
     btnGroup.find("button").remove();
-    var measuresYears = Object.keys(tableArray);
+    let measuresYears = Object.keys(tableArray);
     for(var i = 0; i < measuresYears.length; i++) {
-        var button = '<button type="button" class="btn btn-outline-info" value="'
+        let button = '<button type="button" class="btn btn-outline-info" value="'
             + measuresYears[i] + '">' + measuresYears[i] + '</button>';
         btnGroup.append(button);
     }
