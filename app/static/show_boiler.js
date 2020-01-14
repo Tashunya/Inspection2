@@ -1,4 +1,4 @@
-var jsonobj;
+let jsonobj;
 
 // choose element
 
@@ -12,7 +12,7 @@ $('#block').change( function() {
 function levelOneChoice(childrenArray) {
     lvlOne.find("option").remove();
     lvlTwo.find("option").remove();
-    options = addOptions(childrenArray);
+    let options = addOptions(childrenArray);
     lvlOne.append(options);
 }
 
@@ -23,12 +23,12 @@ $('#level_1').change( function() {
 
 function levelTwoChoice(childrenArray) {
     lvlTwo.find("option").remove();
-    options = addOptions(childrenArray);
+    let options = addOptions(childrenArray);
     lvlTwo.append(options);
 }
 
 function addOptions(childrenArray) {
-    var options = "<option selected value='__None'></option>";
+    let options = "<option selected value='__None'></option>";
     for(var i = 0; i < childrenArray.length; i++) {
         options += "<option value='" + childrenArray[i].id + "'>"
             + childrenArray[i].node_name + "</option>";
@@ -41,13 +41,13 @@ function addOptions(childrenArray) {
 
 $('#chooseNode').click( function() {
 
-    var chosenNode = $('#level_2').val();
+    let chosenNode = $('#level_2').val();
 
     $.get("/boiler/table/" + chosenNode, chooseElement, "json");
 
     function chooseElement(tableArray) {
         // set upload link
-        link = "/boiler/upload?parent_id=" + chosenNode;
+        let link = "/boiler/upload?parent_id=" + chosenNode;
         $("a#upload").attr("href", link);
 
         if (Object.entries(tableArray).length === 0) {
@@ -62,9 +62,9 @@ $('#chooseNode').click( function() {
             // create button group with years
             createBtnGroup(tableArray);
             // find last year
-            var measuresYears = Object.keys(tableArray);
-            var lastYear = measuresYears[measuresYears.length-1];
-            var lastYearData = tableArray[lastYear];
+            let measuresYears = Object.keys(tableArray);
+            let lastYear = measuresYears[measuresYears.length-1];
+            let lastYearData = tableArray[lastYear];
             // show table with data for last year
             createTable(lastYearData)
         }
@@ -109,19 +109,19 @@ function createBtnGroup(tableArray) {
 // when change years
 $("div.btn-group").on('click', 'button', function() {
     //    this.className += " active"
-    var year = this.textContent;
-    var data = jsonobj[year];
+    let year = this.textContent;
+    let data = jsonobj[year];
     createTable(data)
 });
 
 // show table with data
 function createTable(data) {
-    var results = $("tbody");
+    let results = $("tbody");
     results.find("tr").remove();
     $("div[colspan]").remove();
     data.forEach(function(element, index) {
-        var newRow = '<tr><td>' + (index+1) + '</td><td>';
-        var columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];
+        let newRow = '<tr><td>' + (index+1) + '</td><td>';
+        let columns = ['node_name','value', 'default', 'minor', 'major', 'defect'];
         columns.forEach(function(column, num) {
             newRow += element[column] + ((num==columns.length-1) ? '</td></tr>' : '</td><td>')
         });

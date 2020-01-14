@@ -1,9 +1,8 @@
-var value;
-var getData = $.get("/boiler/analytics/" + value);
-var jsonObjResults;
+let value;
+let getData = $.get("/boiler/analytics/" + value);
 
 getData.done(function (results) {
-    jsonObjResults = results;
+    let jsonObjResults = results;
     $('#avg_thinning').html(results["avg_thinning"]);
     $('#avg_thickness').html(results["avg_thickness"]);
     $('#last_year').html(results["last_year"]);
@@ -17,8 +16,8 @@ getData.done(function (results) {
 });
 
 function makeStackedBarChart(results) {
-    var ctx = document.getElementById('BarChart').getContext('2d');
-    var stackedChart = new Chart(ctx, {
+    let ctx = document.getElementById('BarChart').getContext('2d');
+    let stackedChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: results["stacked_bar"]["labels"],
@@ -57,8 +56,8 @@ function makeStackedBarChart(results) {
 }
 
 function makePieChart(results, year) {
-    var ctx = document.getElementById('PieChart').getContext('2d');
-    var pieChart = new Chart(ctx, {
+    let ctx = document.getElementById('PieChart').getContext('2d');
+    let pieChart = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: ['below default', 'below minor', 'below major', 'below defect'],
