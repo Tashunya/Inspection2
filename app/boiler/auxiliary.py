@@ -8,13 +8,15 @@ from sqlalchemy.sql.expression import func, and_, case
 from sqlalchemy.orm import aliased
 from .. import db
 from ..models import Node, Norm, Measurement
+from .. import celery
 
 
-def add_nodes_to_db(boiler_structure, boiler_id):
+@celery.task
+def async_add_nodes_to_db(boiler_structure, boiler_id):
     """
-    Adds newly created boiler structure to db
-    :param boiler_structure:
-    :param boiler_id:
+    Background task to add newly created boiler structure to db
+    :param boiler_structure: dict
+    :param boiler_id: int
     :return: None
     """
 
@@ -77,7 +79,7 @@ def add_nodes_to_db(boiler_structure, boiler_id):
 
 def allowed_file(filename):
     """
-    Checks if uploaded file extension is csv
+    Check if uploaded file extension is csv
     :param filename:
     :return:
     """
@@ -87,7 +89,7 @@ def allowed_file(filename):
 
 def get_analysis_data(parent_id):
     """
-    Provides analysis of average thickness and average thinning of given parent node's children nodes and
+    Provide analysis of average thickness and average thinning of given parent node's children nodes and
     give predictions for the next 2 years based on analysis
     :param parent_id:
     :return: dict

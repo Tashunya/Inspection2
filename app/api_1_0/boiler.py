@@ -17,7 +17,7 @@ def structure():
     Provides default boiler structure as json
     :return: json {'structure': }
     """
-    with open('app/static/default_nodes.json', 'r') as file_obj:
+    with open('app/static/basic_structure.json', 'r') as file_obj:
         default_boiler_structure = json.load(file_obj)
     return default_boiler_structure
 

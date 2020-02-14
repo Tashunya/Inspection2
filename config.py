@@ -26,6 +26,9 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
 
+    CELERY_BROKER_URL = 'amqp://localhost//'
+    CELERY_RESULT_BACKEND = 'rpc://'
+
     @staticmethod
     def init_app(app):
         pass
@@ -33,7 +36,8 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PW}@{POSTGRES_URL}/{POSTGRES_DB}' # 'postgresql+psycopg2://postgres:123123@127.0.0.1:5432/test_db'
+    # BOILER_STRUCTURE = 'app/static/basic_structure.json'
+    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PW}@{POSTGRES_URL}/{POSTGRES_DB}'
 
 
 class TestingConfig(Config):
@@ -42,6 +46,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    # BOILER_STRUCTURE = 'app/static/default_nodes.json'
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 
     @classmethod
