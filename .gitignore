@@ -41,7 +41,7 @@ nosetests.xml
 # Virtual environment
 venv
 
-basic_structure.json
+app/static/basic_structure.json
 
 .idea
 

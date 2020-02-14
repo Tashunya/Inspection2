@@ -66,11 +66,7 @@
     </form>
 
 
-
-<script>
-    var addNodesUrl = "{{ url_for('boiler.add_nodes', boiler_id=id) }}";
-    var boilerId = "{{ id }}";
-</script><script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='add_nodes.js') }}"></script>
 
 
 {% endblock %}

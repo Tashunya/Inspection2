@@ -6,10 +6,10 @@ from flask import render_template, redirect, url_for, flash, abort, json, reques
 from flask_login import login_required, current_user
 from sqlalchemy import extract
 from . import boiler
-from .. import db
+from .. import db, celery
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
 from .forms import CreateBoilerForm, CreateBoilerNodesForm, NodeSelectForm, UploadForm
-from .auxiliary import add_nodes_to_db, allowed_file, get_analysis_data
+from .auxiliary import async_add_nodes_to_db, allowed_file, get_analysis_data
 from ..decorators import permission_required
 
 # =====================================================
@@ -45,16 +45,17 @@ def add_nodes(boiler_id):
     :param boiler_id:
     :return:
     """
-    with open('app/static/default_nodes.json', 'r') as structure_file:
+    with open('app/static/basic_structure.json', 'r') as structure_file:
         default_structure = json.load(structure_file)
 
     form = CreateBoilerNodesForm()
 
     if request.method == 'POST':
         updated_structure = request.get_json()['structure']
-        add_nodes_to_db(updated_structure, boiler_id)
-        flash("Nodes created")
+        async_add_nodes_to_db.delay(updated_structure, boiler_id)
+        flash("Boiler structure will be ready in several minutes, please check it later")
         # return render_template("boiler/show_boiler.html", boiler_id=boiler_id)
+        return redirect(url_for('main.index'))
 
     return render_template('boiler/add_nodes.html', id=boiler_id,
                            form=form, structure=default_structure)
