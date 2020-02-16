@@ -1,5 +1,6 @@
 """
-This module provides one function - get_analysis_data() to get data for analytics from db
+This module provides one function - get_analysis_data()
+to get data for analytics from db
 """
 
 from sqlalchemy.sql.expression import func, and_, case
@@ -10,8 +11,9 @@ from ..models import Node, Norm, Measurement
 
 def get_analysis_data(parent_id):
     """
-    Provides analysis of average thickness and average thinning of given parent node's children
-    nodes and gives predictions for the next 2 years based on analysis
+    Provides analysis of average thickness and average thinning of given
+    parent node's children nodes and gives predictions
+    for the next 2 years based on analysis
     :param parent_id:
     :return: dict
     """
@@ -27,16 +29,20 @@ def get_analysis_data(parent_id):
 
     prev_measurements = aliased(Measurement)
     year = func.extract('year', Measurement.measure_date).label("year")
-    prev_year = func.extract('year', prev_measurements.measure_date).label("prev_year")
+    prev_year = func.extract('year', prev_measurements.measure_date).\
+        label("prev_year")
     current_avg = func.avg(Measurement.value).label("avg_thick")
     prev_avg = func.avg(prev_measurements.value).label("prev_avg_thick")
 
     # get years, avg thickness and avg thinning
-    thicknesses = db.session.query(year, current_avg, (prev_avg - current_avg).label("diff")). \
+    thicknesses = db.session.query(year, current_avg,
+                                   (prev_avg - current_avg).label("diff")). \
         join(Node, Node.id == Measurement.node_id). \
-        outerjoin(prev_measurements, and_(Measurement.node_id == prev_measurements.node_id,
+        outerjoin(prev_measurements,
+                  and_(Measurement.node_id == prev_measurements.node_id,
                                           year == prev_year + 1)). \
-        filter(Node.parent_id == parent_id).group_by(year, prev_year).order_by(year, prev_year)
+        filter(Node.parent_id == parent_id).group_by(year, prev_year). \
+        order_by(year, prev_year)
 
     if len(thicknesses.all()) > 4:
         thicknesses = thicknesses.all()[-4:]
@@ -51,7 +57,8 @@ def get_analysis_data(parent_id):
     for year, avg_thickness, diff_thinning in thicknesses:
         labels.append(int(year))
         thickness.append(round(avg_thickness, 2))
-        thinning.append(abs(round(diff_thinning, 2)) if diff_thinning is not None else 0)
+        thinning.append(abs(round(diff_thinning, 2))
+                        if diff_thinning is not None else 0)
 
     # get average thickness
     result["avg_thickness"] = thickness[-1]
@@ -75,9 +82,12 @@ def get_analysis_data(parent_id):
 
     # get data for pie
     # compare value with norms and define it to one of 4 groups
-    category = case([(and_(Measurement.value > Norm.minor, Measurement.value <= Norm.default), 0),
-                     (and_(Measurement.value > Norm.major, Measurement.value <= Norm.minor), 1),
-                     (and_(Measurement.value > Norm.defect, Measurement.value <= Norm.major), 2)],
+    category = case([(and_(Measurement.value > Norm.minor,
+                           Measurement.value <= Norm.default), 0),
+                     (and_(Measurement.value > Norm.major,
+                           Measurement.value <= Norm.minor), 1),
+                     (and_(Measurement.value > Norm.defect,
+                           Measurement.value <= Norm.major), 2)],
                     else_=3).label("category")
 
     # get data

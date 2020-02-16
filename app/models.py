@@ -8,15 +8,18 @@ from . import db, login_manager
 
 
 class Permission:
-    OWN_BOILER_ACCESS = 1 # доступ к своей компании и к своим котлам (возможно не нужно)
+    OWN_BOILER_ACCESS = 1 # доступ к своей компании и к своим котлам (?)
     ALL_BOILERS_ACCESS = 2 # доступ ко всем компаниям и котлам
     BOILER_DATA_UPLOAD = 4 # загрузка данных измерений ко всем котлам
     USER_REGISTER = 8 # создание и редактирование пользователей
     REPORT_DOWNLOAD = 16 # выгрузка отчетов по котлам
-    EDIT_BOILER_DATA = 32 # редактирование данных по котлам (узлов, норм, измерений)
-    COMPANY_REGISTER = 64 # регистрация и редактирование компаний (возможно перенос в USER_REGISTER?)
+    EDIT_BOILER_DATA = 32 # редактирование данных по котлам
+    # (узлов, норм, измерений)
+    COMPANY_REGISTER = 64 # регистрация и редактирование компаний
+    # (возможно перенос в USER_REGISTER?)
     CREATE_BOILER = 128 # создание карточки и структуры котла
-    VIEW_PROFILES = 256 # просмотр всех профилей пользователей (возможно перенос в USER_REGISTER?)
+    VIEW_PROFILES = 256 # просмотр всех профилей пользователей
+    # (возможно перенос в USER_REGISTER?)
 
 
 # ==============================================
@@ -38,13 +41,19 @@ class Role(db.Model):
     def insert_roles():
         roles = {
             'Repr': [Permission.OWN_BOILER_ACCESS, Permission.REPORT_DOWNLOAD],
-            'Inspector': [Permission.ALL_BOILERS_ACCESS, Permission.BOILER_DATA_UPLOAD,
-                          Permission.EDIT_BOILER_DATA, Permission.REPORT_DOWNLOAD,
+            'Inspector': [Permission.ALL_BOILERS_ACCESS,
+                          Permission.BOILER_DATA_UPLOAD,
+                          Permission.EDIT_BOILER_DATA,
+                          Permission.REPORT_DOWNLOAD,
                           Permission.VIEW_PROFILES],
-            'Administrator': [Permission.ALL_BOILERS_ACCESS, Permission.BOILER_DATA_UPLOAD,
-                              Permission.USER_REGISTER, Permission.REPORT_DOWNLOAD,
-                              Permission.EDIT_BOILER_DATA, Permission.COMPANY_REGISTER,
-                              Permission.CREATE_BOILER, Permission.VIEW_PROFILES]
+            'Administrator': [Permission.ALL_BOILERS_ACCESS,
+                              Permission.BOILER_DATA_UPLOAD,
+                              Permission.USER_REGISTER,
+                              Permission.REPORT_DOWNLOAD,
+                              Permission.EDIT_BOILER_DATA,
+                              Permission.COMPANY_REGISTER,
+                              Permission.CREATE_BOILER,
+                              Permission.VIEW_PROFILES]
         }
 
         for r in roles:
@@ -122,13 +131,15 @@ class User(UserMixin, db.Model):
         return self.role is not None and self.role.has_permission(perm)
 
     def company_access(self, company_id):
-        if self.company_id == company_id or self.can(Permission.ALL_BOILERS_ACCESS):
+        if self.company_id == company_id \
+                or self.can(Permission.ALL_BOILERS_ACCESS):
             return True
         return False
 
     def boiler_access(self, boiler_id):
         boiler = Boiler.query.filter_by(id=boiler_id).first()
-        if self.company_id == boiler.company_id or self.can(Permission.ALL_BOILERS_ACCESS):
+        if self.company_id == boiler.company_id \
+                or self.can(Permission.ALL_BOILERS_ACCESS):
             return True
         return False
 
@@ -198,7 +209,8 @@ class Company(db.Model):
         company_name = json_company.get('company_name')
         location = json_company.get('location')
         about = json_company.get('about')
-        return Company(company_name=company_name, location=location, about=about)
+        return Company(company_name=company_name, location=location,
+                       about=about)
 
     def __repr__(self):
         return '<Company %r>' % self.company_name
@@ -213,7 +225,8 @@ class Boiler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     boiler_name = db.Column(db.String(64), index=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-    nodes = db.relationship('Node', cascade='all,delete', backref='boiler', lazy='dynamic')
+    nodes = db.relationship('Node', cascade='all,delete', backref='boiler',
+                            lazy='dynamic')
 
     def to_json(self):
         json_boiler = {
@@ -243,7 +256,8 @@ class Node(db.Model):  # все узлы и точки котла
     node_name = db.Column(db.String(64))
     picture = db.Column(db.LargeBinary)
     child_nodes = db.relationship('Node', backref=backref("ParentNode",
-                                                          remote_side=[id]), lazy='dynamic')
+                                                          remote_side=[id]),
+                                  lazy='dynamic')
     norms = db.relationship("Norm", cascade='all,delete',
                             backref='node', lazy='dynamic')
     measurements = db.relationship("Measurement", cascade='all,delete',

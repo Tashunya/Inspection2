@@ -37,7 +37,8 @@ def children_level(node_id):
 @api.route('analytics/<int:node_id>')
 def analytics_data(node_id):
     """
-    Provides measurements records info for chosen node for all years + norms info as json
+    Provides measurements records info for chosen node
+    for all years + norms info as json
     :param node_id:
     :return: {"avg_thickness": 0,
               "avg_thinning": 0,
@@ -56,12 +57,14 @@ def analytics_data(node_id):
 @api.route('table/<int:node_id>')
 def table_data(node_id):
     """
-    Returns measurements records info for chosen node for all years + norms info as json
+    Returns measurements records info for chosen node
+    for all years + norms info as json
     :param node_id:
     :return: json
     """
-    table_query = db.session.query(Node.node_name, Measurement.measure_date, Measurement.value,
-                                   Norm.default, Norm.minor, Norm.major, Norm.defect). \
+    table_query = db.session.query(Node.node_name, Measurement.measure_date,
+                                   Measurement.value, Norm.default, Norm.minor,
+                                   Norm.major, Norm.defect). \
         outerjoin(Norm, Norm.node_id == Node.id). \
         outerjoin(Measurement, Measurement.node_id == Node.id). \
         filter(Node.parent_id == node_id). \
@@ -88,7 +91,8 @@ def get_pagination(node_id):
     """
     page = request.args.get('page', 1, type=int)
 
-    table_query = db.session.query(Node.node_name, Node.index, Measurement.measure_date,
+    table_query = db.session.query(Node.node_name, Node.index,
+                                   Measurement.measure_date,
                                    Measurement.value, Norm.default,
                                    Norm.minor, Norm.major, Norm.defect). \
         outerjoin(Norm, Norm.node_id == Node.id). \
