@@ -3,9 +3,10 @@ This module is used to manage boiler routes.
 """
 
 from flask import render_template, redirect, url_for, flash, \
-    abort, json, request, jsonify
+    abort, json, request, jsonify, make_response
 from flask_login import login_required, current_user
 from sqlalchemy import extract
+import pdfkit
 from . import boiler
 from .. import db, celery
 from ..models import Company, Boiler, Permission, Node, Norm, Measurement
@@ -139,7 +140,11 @@ def upload():
 
         data = file.read().decode('utf-8')
         data = data.strip("\r\n").rsplit('\r\n')
-        data = [float(b) for a, b in (row.rsplit(',') for row in data)]
+        try:
+            data = [float(b) for a, b in (row.rsplit(',') for row in data)]
+        except ValueError:
+            flash('Empty or incorrect data. Please, upload another file.')
+            return redirect(url_for('boiler.upload', parent_id=parent_id))
 
         # check number of data from csv file
         if len(data) != len(children):
@@ -174,6 +179,32 @@ def upload():
         return redirect(url_for("boiler.show_boiler", boiler_id=boiler_id))
 
     return render_template('boiler/upload.html', form=form)
+
+
+@boiler.route("/download")
+@login_required
+def download_report():
+    parent_node = int(request.args["parent_id"])
+    year = int(request.args["year"])
+
+    node = Node.query.filter_by(id=parent_node).first()
+
+    boiler_id = node.boiler_id
+    boiler = Boiler.query.filter_by(id=boiler_id).first()
+
+    child = node.child_nodes.first()
+    child_measurement = Measurement.query.filter_by(node_id=child.id).\
+        filter(extract('year', Measurement.measure_date) == year).first()
+    measure_date = child_measurement.measure_date
+
+    rendered = render_template('boiler/report_template.html', node=node,
+                               boiler=boiler, measure_date=measure_date)
+    pdf = pdfkit.from_string(rendered, False)
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    filename = f'report {boiler.boiler_name} - {year}.pdf'
+    response.headers['Content-Disposition'] = f"attachment; filename={filename}"
+    return response
 
 
 @boiler.route("/analytics")

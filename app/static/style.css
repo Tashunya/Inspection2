@@ -28,6 +28,10 @@ input.figures {
     font-size: 1.5em;
 }
 
+.disabled {
+    color: #6c757d;
+}
+
 div[colspan="7"] {
     text-align: center;
     font-size: 2rem;
