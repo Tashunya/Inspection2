@@ -265,3 +265,11 @@ def analytics_data(node_id):
     result = get_analysis_data(node_id)
 
     return jsonify(result)
+
+
+@boiler.route('/default_structure', methods=["GET"])
+@login_required
+def structure():
+    with open('app/static/basic_structure.json', 'r') as f:
+        structure = json.load(f)
+    return jsonify(structure)
