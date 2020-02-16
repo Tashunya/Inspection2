@@ -2,9 +2,9 @@ let input = $("td input");
 
 
 $('#submit').click( function() {
-    $.get("/api/v1/default_structure", function(data) {
+    $.get("/boiler/default_structure", function(data) {
 
-        updateStructure(data); // change structure in default_json
+        updateStructure(data); // change structure in default json
 
         $.ajax({ // send updated structure to Flask view add_nodes
             async: false,
