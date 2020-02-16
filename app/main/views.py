@@ -2,7 +2,8 @@ from flask import render_template, redirect, url_for, flash, abort, current_app
 from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, CompanyRegistrationForm, EditCompanyForm
+from .forms import EditProfileForm, EditProfileAdminForm, \
+    CompanyRegistrationForm, EditCompanyForm
 from .. import db
 from ..models import User, Company, Role, Permission
 from ..decorators import permission_required
@@ -42,7 +43,8 @@ def index():
 def inspector():
     if current_user.role.name == "Inspector":
         company_list = Company.query.order_by(Company.company_name).all()
-        return render_template('inspector_admin.html', company_list=company_list)
+        return render_template('inspector_admin.html',
+                               company_list=company_list)
     else:
         abort(403)
 
@@ -52,7 +54,8 @@ def inspector():
 def admin():
     if current_user.role.name == "Administrator":
         company_list = Company.query.order_by(Company.company_name).all()
-        return render_template('inspector_admin.html', company_list=company_list)
+        return render_template('inspector_admin.html',
+                               company_list=company_list)
     abort(403)
 
 
@@ -67,7 +70,8 @@ def user(id):
     user = User.query.filter_by(id=id).first_or_404()
     if not current_user.company_access(user.company_id):
         abort(403)
-    return render_template('user.html', user=user, company=user.company, role=user.role)
+    return render_template('user.html', user=user, company=user.company,
+                           role=user.role)
 
 
 @main.route('/edit-profile', methods=["GET", "POST"])
@@ -145,7 +149,8 @@ def company(id):
     company = Company.query.filter_by(id=id).first_or_404()
     employees = company.users.order_by(User.username)
     boilers = company.boilers
-    return render_template('company.html', company=company, employees=employees, boilers=boilers)
+    return render_template('company.html', company=company,
+                           employees=employees, boilers=boilers)
 
 
 @main.route('/edit-company/<int:id>', methods=["GET", "POST"])
