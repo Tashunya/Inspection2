@@ -1,0 +1,41 @@
+<!--Company name: {{boiler.company.company_name}}-->
+
+<p>Boiler: {{ boiler.boiler_name }}</p>
+
+<p>Company name: {{ boiler.company.company_name }}</p>
+
+<p>Company location: {{ boiler.company.location }}</p>
+
+
+<h1>Report</h1>
+
+<h4>Element: {{ node.ParentNode.ParentNode.node_name }} / {{ node.ParentNode.node_name}} / {{ node.node_name }}</h4>
+
+<p>Measurement date: {{ measure_date.date() }}</p>
+
+
+<table>
+    <thead>
+        <th>#</th>
+        <th>Point Index</th>
+        <th>Value</th>
+        <th>Origin</th>
+        <th>Minor</th>
+        <th>Major</th>
+        <th>Defect</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+        <td>4</td>
+        <td>5</td>
+        <td>6</td>
+        <td>7</td>
+    </tr>
+<!--    {%for row in rows%}-->
+<!--        -->
+<!--    {% endfor %}}-->
+    </tbody>
+</table>

@@ -47,8 +47,9 @@ $('#chooseNode').click( function() {
 
     function chooseElement(tableArray) {
         // set upload link
-        let link = "/boiler/upload?parent_id=" + chosenNode;
-        $("a#upload").attr("href", link);
+        let uploadLink = "/boiler/upload?parent_id=" + chosenNode;
+        $("a#upload").attr("href", uploadLink);
+        $(".fa-file-upload").removeClass('disabled');
 
         if (Object.entries(tableArray).length === 0) {
             changeElementName();
@@ -62,9 +63,16 @@ $('#chooseNode').click( function() {
             // create button group with years
             createBtnGroup(tableArray);
             // find last year
-            let measuresYears = Object.keys(tableArray);
+            let measuresYears = Object.keys(tableArray).sort();
             let lastYear = measuresYears[measuresYears.length-1];
             let lastYearData = tableArray[lastYear];
+
+            // set download link
+            let downloadLink = "/boiler/download?parent_id=" + chosenNode;
+            downloadLink = downloadLink + "&year=" + lastYear;
+            $("a#download").attr("href", downloadLink);
+            $(".fa-file-download").removeClass('disabled');
+
             // show table with data for last year
             createTable(lastYearData)
         }
@@ -109,8 +117,14 @@ function createBtnGroup(tableArray) {
 // when change years
 $("div.btn-group").on('click', 'button', function() {
     //    this.className += " active"
+
+    let chosenNode = $('#level_2').val();
     let year = this.textContent;
     let data = jsonobj[year];
+    // set download link
+    let downloadLink = "/boiler/download?parent_id=" + chosenNode;
+    downloadLink = downloadLink + "&year=" + year;
+    $("a#download").attr("href", downloadLink);
     createTable(data)
 });
 
